@@ -21,6 +21,8 @@
 
 @property (strong, nonatomic) UIView *headerView;
 
+@property (strong, nonatomic) NSMutableArray <UILabel *>*headerLabelArray;
+
 // 数据的个数 = (该月日历的row * 7)  ---> 需要把日历前后没有数据的地方填充起来
 @property (strong, nonatomic) NSMutableArray *dataSource;
 
@@ -114,6 +116,17 @@
 
 #pragma mark - getter
 
+- (NSArray *)weekdayArray {
+    return @[@"日", @"一", @"二", @"三", @"四", @"五", @"六"];
+}
+
+- (UIView *)headerView {
+    if (!_headerView) {
+        
+    }
+    return _headerView;
+}
+
 - (UICollectionView *)collectionView {
     if (!_collectionView) {
         _collectionView = [[UICollectionView alloc] initWithFrame:self.bounds collectionViewLayout:self.collectionViewFlowLayout];
@@ -146,6 +159,13 @@
         _dataSource = [NSMutableArray array];
     }
     return _dataSource;
+}
+
+- (NSMutableArray<UILabel *> *)headerLabelArray {
+    if (!_headerLabelArray) {
+        _headerLabelArray = [NSMutableArray arrayWithCapacity:kWeekdayNum];
+    }
+    return _headerLabelArray;
 }
 
 @end
