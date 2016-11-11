@@ -17,6 +17,7 @@
 		4AB03FC01DD40EBE00C0C7C9 /* HQLCalenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FBF1DD40EBE00C0C7C9 /* HQLCalenderView.m */; };
 		4AB03FC31DD45B5E00C0C7C9 /* HQLCalenderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FC21DD45B5E00C0C7C9 /* HQLCalenderCell.m */; };
 		4AB03FC61DD4894300C0C7C9 /* UIView+ST.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FC51DD4894300C0C7C9 /* UIView+ST.m */; };
+		4AB03FC91DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FC81DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,8 @@
 		4AB03FC21DD45B5E00C0C7C9 /* HQLCalenderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalenderCell.m; sourceTree = "<group>"; };
 		4AB03FC41DD4894300C0C7C9 /* UIView+ST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ST.h"; sourceTree = "<group>"; };
 		4AB03FC51DD4894300C0C7C9 /* UIView+ST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ST.m"; sourceTree = "<group>"; };
+		4AB03FC71DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLDrawGeometricShapeView.h; sourceTree = "<group>"; };
+		4AB03FC81DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLDrawGeometricShapeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +137,8 @@
 				4AB03FBF1DD40EBE00C0C7C9 /* HQLCalenderView.m */,
 				4AB03FC11DD45B5D00C0C7C9 /* HQLCalenderCell.h */,
 				4AB03FC21DD45B5E00C0C7C9 /* HQLCalenderCell.m */,
+				4AB03FC71DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.h */,
+				4AB03FC81DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -223,6 +228,7 @@
 				4AB03FC01DD40EBE00C0C7C9 /* HQLCalenderView.m in Sources */,
 				4AB03F9C1DD319BA00C0C7C9 /* AppDelegate.m in Sources */,
 				4AB03F991DD319BA00C0C7C9 /* main.m in Sources */,
+				4AB03FC91DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m in Sources */,
 				4AB03FBD1DD320E100C0C7C9 /* testController.m in Sources */,
 				4AB03FC31DD45B5E00C0C7C9 /* HQLCalenderCell.m in Sources */,
 				4AB03FC61DD4894300C0C7C9 /* UIView+ST.m in Sources */,

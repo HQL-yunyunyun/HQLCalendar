@@ -8,7 +8,26 @@
 
 #import <UIKit/UIKit.h>
 
-@class HQLDateModel;
+@class HQLDateModel, HQLCalenderView;
+
+typedef enum {
+    calenderViewSelectionStyleDay = 0,  // 日期选中时的模式,选中单日
+    calenderViewSelectionStyleWeek ,    // 日期选中时的模式,选中一周
+    calenderViewSelectionStyleCustom  //  日期选中时的模式,自定义区间
+} HQLCalenderViewSelectionStyle;
+
+typedef enum {
+    calenderViewSelectionStyleCustomBeginDate = 0,     // 自定义区间的开始
+    calenderViewSelectionStyleCustomMiddleDate,          // 自定义区间的中间
+    calenderViewSelectionStyleCustomEndDate               // 自定义区间的结束
+} HQLCalenderViewSelectionStyleCustom;
+
+@protocol HQLCalenderViewDelegate <NSObject>
+
+@optional
+- (void)calenderView:(HQLCalenderView *)calederView selectionStyle:(HQLCalenderViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end;
+
+@end
 
 @interface HQLCalenderView : UIView
 
@@ -20,6 +39,22 @@
  */
 @property (strong, nonatomic) HQLDateModel *dateModel;
 @property (assign, nonatomic) CGFloat viewHeight;
+@property (assign, nonatomic) id <HQLCalenderViewDelegate>delegate;
+
+/**
+ 选中模式
+ */
+@property (assign, nonatomic) HQLCalenderViewSelectionStyle selectionStyle;
+
+/**
+ 是否选中当前日期
+ */
+@property (assign, nonatomic, getter=isSelectedCurrentDate) BOOL selectedCurrentDate;
+
+/**
+ 是否可以选中未来的日期
+ */
+@property (assign, nonatomic, getter=isAllowSelectedFutureDate) BOOL allowSelectedFutureDate;
 
 // 高度不可控制
 - (instancetype)initWithFrame:(CGRect)frame dateModel:(HQLDateModel *)dateModel;
@@ -37,6 +72,8 @@
 @property (assign, nonatomic, getter=isZero) BOOL zero; // 空model
 
 @property (assign, nonatomic, getter=isSelected) BOOL selected;
+
+@property (assign, nonatomic) HQLCalenderViewSelectionStyleCustom customStyle;
 
 - (instancetype)initWithZero; // 创建一个空的model
 

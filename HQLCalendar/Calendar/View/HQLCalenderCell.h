@@ -7,11 +7,27 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HQLCalenderView.h"
 
 @class HQLDateModel;
 
 @interface HQLCalenderCell : UICollectionViewCell
 
 @property (strong, nonatomic) HQLDateModel *dateModel;
+
+/**
+ 选中模式
+ */
+@property (assign, nonatomic) HQLCalenderViewSelectionStyle HQL_SelectionStyle;
+
+/**
+ 是否选中当前日期
+ */
+@property (assign, nonatomic, getter=isSelectedCurrentDate) BOOL selectedCurrentDate;
+
+/**
+ 是否可以选中未来的日期
+ */
+@property (assign, nonatomic, getter=isAllowSelectedFutureDate) BOOL allowSelectedFutureDate;
 
 @end

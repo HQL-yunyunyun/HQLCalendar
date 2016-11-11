@@ -10,8 +10,13 @@
 #import "HQLCalenderCell.h"
 #import "UIView+ST.h"
 
-#define kWeekdayNum 7
-#define kCalenderCellReuseID @"calenderCellReuseID"
+#define kWeekdayNum 7 // 一周七天 / 从星期天开始
+#define kCalenderCellReuseID @"calenderCellReuseID" // reuseID
+#define kItemWidth (self.collectionViewWidth / kWeekdayNum) // collectionView item的宽度
+#define kItemHeight (kItemWidth * 0.8) // collectionView item的高度
+
+#define HQLColorWithAlpha(r,g,b,a) [UIColor colorWithRed:( r / 255.0)  green:( g / 255.0) blue:( b / 255.0) alpha:a]
+#define HQLColor(r,g,b) HQLColorWithAlpha(r,g,b,1)
 
 @interface HQLCalenderView () <UICollectionViewDelegate, UICollectionViewDataSource>
 
@@ -23,8 +28,13 @@
 
 @property (strong, nonatomic) NSMutableArray <UILabel *>*headerLabelArray;
 
+@property (weak, nonatomic) UIView *headerViewBottomLine;
+
 // 数据的个数 = (该月日历的row * 7)  ---> 需要把日历前后没有数据的地方填充起来
 @property (strong, nonatomic) NSMutableArray *dataSource;
+
+// 计算出collectionView的宽度
+@property (assign, nonatomic) CGFloat collectionViewWidth;
 
 @end
 
@@ -39,24 +49,38 @@
     if (self = [super initWithFrame:frame]) {
         self.dateModel = dateModel;
         [self prepareUI];
+        
     }
     return self;
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    [self calcuateCollectionFrame];
+    [self calcuateViewFrame];
 }
 
 #pragma mark - prepare UI
 
 - (void)prepareUI {
-    [self setBackgroundColor:[UIColor blueColor]];
+    [self setBackgroundColor:[UIColor whiteColor]];
 }
 
 #pragma mark - event
 
 #pragma mark - collection view delegate
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"点击");
+    HQLDateModel *model = self.dataSource[indexPath.item];
+    if (self.selectionStyle == calenderViewSelectionStyleDay) {
+        model.selected = !model.isSelected;
+        [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+    } else if (self.selectionStyle == calenderViewSelectionStyleWeek) {
+    
+    } else if (self.selectionStyle == calenderViewSelectionStyleCustom) {
+    
+    }
+}
 
 #pragma mark - collection view dataSource
 
@@ -70,18 +94,36 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     HQLCalenderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCalenderCellReuseID forIndexPath:indexPath];
+    cell.HQL_SelectionStyle = self.selectionStyle;
     cell.dateModel = self.dataSource[indexPath.item];
     return cell;
 }
 
-- (void)calcuateCollectionFrame {
-    CGFloat itemHeight = self.frame.size.width / kWeekdayNum;
-    self.collectionViewFlowLayout.itemSize = CGSizeMake(itemHeight, itemHeight);
+- (void)calcuateViewFrame {
+    // 计算headerView的frame
+    self.headerView.height = kItemHeight;
+    self.headerView.width = self.width;
+    self.headerViewBottomLine.y = kItemHeight;
+    self.headerViewBottomLine.width = self.width;
+    // 计算label的frame
+    UILabel *lastLabel = nil;
+    for (UILabel *label in self.headerLabelArray) {
+        label.height = kItemHeight;
+        label.width = kItemWidth;
+        label.y = 0;
+        label.x = CGRectGetMaxX(lastLabel.frame);
+        lastLabel = label;
+    }
+    // 计算collectionView的frame
+    self.collectionViewFlowLayout.itemSize = CGSizeMake(kItemWidth, kItemWidth);
     [self.collectionView reloadData];
     // 计算collectionView的高度
     NSInteger row = self.dataSource.count / 7;
-    self.collectionView.height = row * itemHeight;
-    self.collectionView.width = self.width;
+    self.collectionView.y = CGRectGetMaxY(self.headerView.frame);
+    self.collectionView.height = row * kItemWidth;
+    self.collectionView.width = self.collectionViewWidth;
+    self.collectionView.x = (self.width - self.collectionViewWidth) * 0.5;
+    // 整个View的height
     self.viewHeight = CGRectGetMaxY(self.collectionView.frame);
     self.height = self.viewHeight;
 }
@@ -91,12 +133,20 @@
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
 //    [self calcuateCollectionFrame];
+    NSInteger itemWidth = frame.size.width / kWeekdayNum;
+    self.collectionViewWidth = itemWidth * kWeekdayNum;
+}
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
+    [super setBackgroundColor:backgroundColor];
+    [self.collectionView setBackgroundColor:backgroundColor];
+    [self.headerView setBackgroundColor:backgroundColor];
 }
 
 - (void)setDateModel:(HQLDateModel *)dateModel {
     if (dateModel == nil) return;
     _dateModel = dateModel;
-    
+    [self.dataSource removeAllObjects];
     // 设置dataSource
     NSInteger firstWeekday = [HQLDateModel weekdayOfYear:dateModel.year month:dateModel.month day:1];
     NSInteger num = [dateModel numberOfDaysInCurrentMonth];
@@ -111,7 +161,6 @@
             [self.dataSource addObject:[[HQLDateModel alloc] initWithZero]];
         }
     }
-    [self calcuateCollectionFrame];
 }
 
 #pragma mark - getter
@@ -123,6 +172,28 @@
 - (UIView *)headerView {
     if (!_headerView) {
         // 创建
+        _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.width, kItemHeight)];
+        [self addSubview:_headerView];
+        // label
+        for (NSString *title in [self weekdayArray]) {
+            UILabel *label = [[UILabel alloc] init];
+            UIColor *titleColor = HQLColor(51, 51, 51);
+            if ([title isEqualToString:@"日"] || [title isEqualToString:@"六"]) {
+                titleColor = [UIColor orangeColor];
+            }
+            [label setTextColor:titleColor];
+            [label setFont:[UIFont systemFontOfSize:14]];
+            [label setTextAlignment:NSTextAlignmentCenter];
+            [label setText:title];
+            [label sizeToFit];
+            [_headerView addSubview:label];
+            [self.headerLabelArray addObject:label];
+        }
+        // lineView
+        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, kItemHeight, self.width, 0.5)];
+        [lineView setBackgroundColor:HQLColor(220, 218, 220)];
+        [_headerView addSubview:lineView];
+        self.headerViewBottomLine = lineView;
     }
     return _headerView;
 }
@@ -134,7 +205,7 @@
         _collectionView.showsHorizontalScrollIndicator = NO;
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
-        [_collectionView setBackgroundColor:[UIColor redColor]];
+//        [_collectionView setBackgroundColor:[UIColor blueColor]];
         [_collectionView registerClass:[HQLCalenderCell class] forCellWithReuseIdentifier:kCalenderCellReuseID];
         [self addSubview:_collectionView];
     }
@@ -145,8 +216,7 @@
     if (!_collectionViewFlowLayout) {
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
         flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
-        CGFloat itemW = self.frame.size.width / kWeekdayNum;
-        flowLayout.itemSize = CGSizeMake(itemW, itemW);
+        flowLayout.itemSize = CGSizeMake(kItemWidth, kItemWidth); // item 为正方形
         flowLayout.minimumLineSpacing = 0;
         flowLayout.minimumInteritemSpacing = 0;
         _collectionViewFlowLayout = flowLayout;
@@ -248,7 +318,7 @@
     }
     if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
         maxDays = 31;
-    } else {
+    } else if (month != 2) {
         maxDays = 30;
     }
     if (day > maxDays) {

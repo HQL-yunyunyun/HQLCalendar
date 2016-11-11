@@ -24,11 +24,13 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
-    HQLCalenderView *view = [[HQLCalenderView alloc] initWithFrame:self.view.bounds dateModel:[[HQLDateModel alloc] initWithYear:2017 month:1 day:1]];
+    HQLCalenderView *view = [[HQLCalenderView alloc] initWithFrame:self.view.bounds dateModel:[[HQLDateModel alloc] initWithYear:2017 month:2 day:28]];
+    view.selectionStyle = calenderViewSelectionStyleDay;
     CGRect viewf = view.frame;
     viewf.origin.y = 100;
-    viewf.size.width = 200;
     view.frame = viewf;
+    
+//    view.dateModel = [[HQLDateModel alloc] initWithYear:2016 month:1 day:1];
     [self.view addSubview:view];
 }
 
