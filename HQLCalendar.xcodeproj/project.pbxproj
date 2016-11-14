@@ -14,8 +14,8 @@
 		4AB03FA71DD319BA00C0C7C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AB03FA51DD319BA00C0C7C9 /* LaunchScreen.storyboard */; };
 		4AB03FBA1DD31A5F00C0C7C9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FB91DD31A5F00C0C7C9 /* ViewController.m */; };
 		4AB03FBD1DD320E100C0C7C9 /* testController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FBC1DD320E100C0C7C9 /* testController.m */; };
-		4AB03FC01DD40EBE00C0C7C9 /* HQLCalenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FBF1DD40EBE00C0C7C9 /* HQLCalenderView.m */; };
-		4AB03FC31DD45B5E00C0C7C9 /* HQLCalenderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FC21DD45B5E00C0C7C9 /* HQLCalenderCell.m */; };
+		4AB03FC01DD40EBE00C0C7C9 /* HQLCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FBF1DD40EBE00C0C7C9 /* HQLCalendarView.m */; };
+		4AB03FC31DD45B5E00C0C7C9 /* HQLCalendarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FC21DD45B5E00C0C7C9 /* HQLCalendarCell.m */; };
 		4AB03FC61DD4894300C0C7C9 /* UIView+ST.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FC51DD4894300C0C7C9 /* UIView+ST.m */; };
 		4AB03FC91DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03FC81DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m */; };
 /* End PBXBuildFile section */
@@ -33,10 +33,10 @@
 		4AB03FB91DD31A5F00C0C7C9 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		4AB03FBB1DD320E100C0C7C9 /* testController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testController.h; sourceTree = "<group>"; };
 		4AB03FBC1DD320E100C0C7C9 /* testController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = testController.m; sourceTree = "<group>"; };
-		4AB03FBE1DD40EBE00C0C7C9 /* HQLCalenderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLCalenderView.h; sourceTree = "<group>"; };
-		4AB03FBF1DD40EBE00C0C7C9 /* HQLCalenderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalenderView.m; sourceTree = "<group>"; };
-		4AB03FC11DD45B5D00C0C7C9 /* HQLCalenderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLCalenderCell.h; sourceTree = "<group>"; };
-		4AB03FC21DD45B5E00C0C7C9 /* HQLCalenderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalenderCell.m; sourceTree = "<group>"; };
+		4AB03FBE1DD40EBE00C0C7C9 /* HQLCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLCalendarView.h; sourceTree = "<group>"; };
+		4AB03FBF1DD40EBE00C0C7C9 /* HQLCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalendarView.m; sourceTree = "<group>"; };
+		4AB03FC11DD45B5D00C0C7C9 /* HQLCalendarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLCalendarCell.h; sourceTree = "<group>"; };
+		4AB03FC21DD45B5E00C0C7C9 /* HQLCalendarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalendarCell.m; sourceTree = "<group>"; };
 		4AB03FC41DD4894300C0C7C9 /* UIView+ST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ST.h"; sourceTree = "<group>"; };
 		4AB03FC51DD4894300C0C7C9 /* UIView+ST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ST.m"; sourceTree = "<group>"; };
 		4AB03FC71DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLDrawGeometricShapeView.h; sourceTree = "<group>"; };
@@ -133,10 +133,10 @@
 		4AB03FB61DD31A3700C0C7C9 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4AB03FBE1DD40EBE00C0C7C9 /* HQLCalenderView.h */,
-				4AB03FBF1DD40EBE00C0C7C9 /* HQLCalenderView.m */,
-				4AB03FC11DD45B5D00C0C7C9 /* HQLCalenderCell.h */,
-				4AB03FC21DD45B5E00C0C7C9 /* HQLCalenderCell.m */,
+				4AB03FBE1DD40EBE00C0C7C9 /* HQLCalendarView.h */,
+				4AB03FBF1DD40EBE00C0C7C9 /* HQLCalendarView.m */,
+				4AB03FC11DD45B5D00C0C7C9 /* HQLCalendarCell.h */,
+				4AB03FC21DD45B5E00C0C7C9 /* HQLCalendarCell.m */,
 				4AB03FC71DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.h */,
 				4AB03FC81DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m */,
 			);
@@ -225,12 +225,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AB03FBA1DD31A5F00C0C7C9 /* ViewController.m in Sources */,
-				4AB03FC01DD40EBE00C0C7C9 /* HQLCalenderView.m in Sources */,
+				4AB03FC01DD40EBE00C0C7C9 /* HQLCalendarView.m in Sources */,
 				4AB03F9C1DD319BA00C0C7C9 /* AppDelegate.m in Sources */,
 				4AB03F991DD319BA00C0C7C9 /* main.m in Sources */,
 				4AB03FC91DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m in Sources */,
 				4AB03FBD1DD320E100C0C7C9 /* testController.m in Sources */,
-				4AB03FC31DD45B5E00C0C7C9 /* HQLCalenderCell.m in Sources */,
+				4AB03FC31DD45B5E00C0C7C9 /* HQLCalendarCell.m in Sources */,
 				4AB03FC61DD4894300C0C7C9 /* UIView+ST.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
