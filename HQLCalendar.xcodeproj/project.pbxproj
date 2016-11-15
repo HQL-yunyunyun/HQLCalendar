@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A2FFA621DDAF703007EBC33 /* HQLCalendar.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A2FFA611DDAF702007EBC33 /* HQLCalendar.m */; };
 		4AB03F991DD319BA00C0C7C9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03F981DD319BA00C0C7C9 /* main.m */; };
 		4AB03F9C1DD319BA00C0C7C9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03F9B1DD319BA00C0C7C9 /* AppDelegate.m */; };
 		4AB03FA21DD319BA00C0C7C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AB03FA01DD319BA00C0C7C9 /* Main.storyboard */; };
@@ -21,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A2FFA601DDAF702007EBC33 /* HQLCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLCalendar.h; sourceTree = "<group>"; };
+		4A2FFA611DDAF702007EBC33 /* HQLCalendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalendar.m; sourceTree = "<group>"; };
 		4AB03F941DD319BA00C0C7C9 /* HQLCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AB03F981DD319BA00C0C7C9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4AB03F9A1DD319BA00C0C7C9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -139,6 +142,8 @@
 				4AB03FC21DD45B5E00C0C7C9 /* HQLCalendarCell.m */,
 				4AB03FC71DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.h */,
 				4AB03FC81DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m */,
+				4A2FFA601DDAF702007EBC33 /* HQLCalendar.h */,
+				4A2FFA611DDAF702007EBC33 /* HQLCalendar.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -232,6 +237,7 @@
 				4AB03FBD1DD320E100C0C7C9 /* testController.m in Sources */,
 				4AB03FC31DD45B5E00C0C7C9 /* HQLCalendarCell.m in Sources */,
 				4AB03FC61DD4894300C0C7C9 /* UIView+ST.m in Sources */,
+				4A2FFA621DDAF703007EBC33 /* HQLCalendar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

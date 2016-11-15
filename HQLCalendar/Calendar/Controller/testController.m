@@ -25,12 +25,15 @@
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     HQLCalendarView *view = [[HQLCalendarView alloc] initWithFrame:self.view.bounds dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
+    view.delegate = self;
     if (self.mode == 1) {
         view.selectionStyle = calendarViewSelectionStyleWeek;
         view.allowSelectedFutureDate = NO;
+        view.selectedFirstWeek = YES;
     } else if (self.mode == 2) {
         view.selectionStyle = calendarViewSelectionStyleWeek;
         view.allowSelectedFutureDate = YES;
+        view.selectedLastWeek = YES;
     } else if (self.mode == 3) {
         view.selectionStyle = calendarViewSelectionStyleDay;
         view.allowSelectedFutureDate = NO;
@@ -41,7 +44,7 @@
     CGRect viewf = view.frame;
     viewf.origin.y = 100;
     view.frame = viewf;
-    view.delegate = self;
+    
     [self.view addSubview:view];
 }
 

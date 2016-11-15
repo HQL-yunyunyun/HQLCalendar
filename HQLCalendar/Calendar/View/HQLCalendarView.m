@@ -15,9 +15,6 @@
 #define kItemWidth (self.collectionViewWidth / kWeekdayNum) // collectionView item的宽度
 #define kItemHeight (kItemWidth * 0.8) // collectionView item的高度
 
-#define HQLColorWithAlpha(r,g,b,a) [UIColor colorWithRed:( r / 255.0)  green:( g / 255.0) blue:( b / 255.0) alpha:a]
-#define HQLColor(r,g,b) HQLColorWithAlpha(r,g,b,1)
-
 @interface HQLCalendarView () <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (strong, nonatomic) UICollectionView *collectionView;
@@ -287,7 +284,9 @@
             [self.dataSource addObject:[[HQLDateModel alloc] initWithZero]];
         }
     }
-    [self setAllowSelectedFutureDate:self.isAllowSelectedFutureDate];
+    [self setAllowSelectedFutureDate:self.isAllowSelectedFutureDate]; // 是否允许选择未来日期
+    [self setSelectedLastWeek:self.selectedLastWeek]; // 选择最后一个星期
+    [self setSelectedFirstWeek:self.selectedFirstWeek]; // 选择第一个星期
 }
 
 - (void)setAllowSelectedFutureDate:(BOOL)allowSelectedFutureDate {
@@ -298,6 +297,33 @@
         for (HQLDateModel *date in self.dataSource) {
             date.allowSelectedFutureDate = allowSelectedFutureDate ? YES : [today compareWithHQLDateWithOutTime:date] > -1;
         }
+    }
+}
+
+- (void)setSelectedLastWeek:(BOOL)selectedLastWeek {
+    _selectedLastWeek = selectedLastWeek;
+    if (selectedLastWeek) {
+        self.selectedFirstWeek = NO;
+    }
+    [self selectedFirstOrLastWeek:selectedLastWeek isSelectFirstWeek:NO];
+}
+
+- (void)setSelectedFirstWeek:(BOOL)selectedFirstWeek {
+    _selectedFirstWeek = selectedFirstWeek;
+    if (selectedFirstWeek) {
+        self.selectedLastWeek = NO;
+    }
+    [self selectedFirstOrLastWeek:selectedFirstWeek isSelectFirstWeek:YES];
+}
+
+- (void)selectedFirstOrLastWeek:(BOOL)yesOrNo isSelectFirstWeek:(BOOL)isSelectFirst {
+    if (self.dataSource.count !=0 && yesOrNo && self.selectionStyle == calendarViewSelectionStyleWeek) {
+        // 选择第一个星期
+        NSInteger day = isSelectFirst ? 1 : [self.dateModel numberOfDaysInCurrentMonth];
+        NSInteger weekday = [HQLDateModel weekdayOfYear:self.dateModel.year month:self.dateModel.month day:day];
+        NSInteger item = isSelectFirst ? (weekday - 1) : (self.dataSource.count - (kWeekdayNum - weekday) - 1);
+        NSIndexPath *IndexPath = [NSIndexPath indexPathForItem:item inSection:0];
+        [self collectionView:self.collectionView didSelectItemAtIndexPath:IndexPath];
     }
 }
 

@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+#define HQLColorWithAlpha(r,g,b,a) [UIColor colorWithRed:( r / 255.0)  green:( g / 255.0) blue:( b / 255.0) alpha:a]
+#define HQLColor(r,g,b) HQLColorWithAlpha(r,g,b,1)
+
 @class HQLDateModel, HQLCalendarView;
 
 typedef enum {
@@ -47,7 +50,7 @@ typedef enum {
 @property (assign, nonatomic) HQLCalendarViewSelectionStyle selectionStyle;
 
 /**
- 是否选中当前日期
+ 是否选中当前日期 -- 没实现
  */
 @property (assign, nonatomic, getter=isSelectedCurrentDate) BOOL selectedCurrentDate;
 
