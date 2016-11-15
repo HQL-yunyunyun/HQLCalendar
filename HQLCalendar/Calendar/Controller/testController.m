@@ -24,13 +24,24 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
-    HQLCalendarView *view = [[HQLCalendarView alloc] initWithFrame:self.view.bounds dateModel:[[HQLDateModel alloc] initWithYear:2017 month:2 day:28]];
-    view.selectionStyle = calendarViewSelectionStyleDay;
+    HQLCalendarView *view = [[HQLCalendarView alloc] initWithFrame:self.view.bounds dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
+    if (self.mode == 1) {
+        view.selectionStyle = calendarViewSelectionStyleWeek;
+        view.allowSelectedFutureDate = NO;
+    } else if (self.mode == 2) {
+        view.selectionStyle = calendarViewSelectionStyleWeek;
+        view.allowSelectedFutureDate = YES;
+    } else if (self.mode == 3) {
+        view.selectionStyle = calendarViewSelectionStyleDay;
+        view.allowSelectedFutureDate = NO;
+    } else {
+        view.selectionStyle = calendarViewSelectionStyleDay;
+        view.allowSelectedFutureDate = YES;
+    }
     CGRect viewf = view.frame;
     viewf.origin.y = 100;
     view.frame = viewf;
     view.delegate = self;
-//    view.dateModel = [[HQLDateModel alloc] initWithYear:2016 month:1 day:1];
     [self.view addSubview:view];
 }
 

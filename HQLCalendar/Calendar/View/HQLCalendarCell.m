@@ -11,6 +11,9 @@
 #import "UIView+ST.h"
 #import "HQLDrawGeometricShapeView.h"
 
+#define HQLColorWithAlpha(r,g,b,a) [UIColor colorWithRed:( r / 255.0)  green:( g / 255.0) blue:( b / 255.0) alpha:a]
+#define HQLColor(r,g,b) HQLColorWithAlpha(r,g,b,1)
+
 @interface HQLCalendarCell ()
 
 @property (strong, nonatomic) UILabel *dateLabel;
@@ -38,12 +41,12 @@
     self.dateLabel.width = self.width;
     self.dateLabel.x = 0;
     double sign = self.isShowDescString ? 0.6 : 1;
-    self.dateLabel.y = (self.height * sign - self.dateLabel.height) * 0.5;
+    self.dateLabel.y = (self.height * sign - self.dateLabel.height) * 0.5 + (self.isShowDescString ? 3 : 0);
     if (self.isShowDescString) {
         [self.descLabel sizeToFit];
         self.descLabel.width = self.width;
         self.descLabel.x = 0;
-        self.descLabel.y = self.height * 0.8 - self.descLabel.height * 0.5;
+        self.descLabel.y = (self.height * 0.8 - self.descLabel.height * 0.5) - 2;
     }
     
     
@@ -69,9 +72,16 @@
         return;
     }
     [self.dateLabel setText:[NSString stringWithFormat:@"%ld", dateModel.day]];
-    
     [self.descLabel setText:@"测试"];
     
+    if (!dateModel.isAllowSelectedFutureDate) {
+        // 不能选择未来的日期
+        [self.dateLabel setTextColor:HQLColor(170, 170, 170)];
+        [self setShowDescString:NO];
+        return;
+    }
+    
+    // 正常的情况
     HQLDrawGeometricShape shape = drawGeometricShapeNone;
     UIColor *selectedColor = self.backgroundColor;
     
@@ -107,7 +117,14 @@
         selectedColor = self.backgroundColor;
         
         if (self.HQL_SelectionStyle == calendarViewSelectionStyleWeek) {
-            selectedColor = [UIColor lightGrayColor];
+            selectedColor = HQLColor(250, 248, 250);
+        }
+        if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay && [[HQLDateModel HQLDate] isEqualHQLDateWithOutTime:dateModel]) {
+            selectedColor = [UIColor orangeColor];
+            shape = drawGeometricShapeCircularRing;
+            
+            [self.dateLabel setTextColor:[UIColor orangeColor]];
+            [self.descLabel setTextColor:[UIColor orangeColor]];
         }
     }
     [self.selectedView setColor:selectedColor];

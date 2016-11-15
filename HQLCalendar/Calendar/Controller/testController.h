@@ -10,4 +10,6 @@
 
 @interface testController : UIViewController
 
+@property (assign, nonatomic) NSInteger mode;
+
 @end

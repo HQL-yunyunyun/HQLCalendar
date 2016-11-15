@@ -18,17 +18,41 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ryk-Qb-N6Y">
-                                <state key="normal" title="Button"/>
+                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ryk-Qb-N6Y">
+                                <state key="normal" title="1"/>
                                 <connections>
-                                    <action selector="buttonDidClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0dD-Ml-IQk"/>
+                                    <action selector="buttonDidClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="FAi-ME-Ti7"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fdO-kZ-PGO">
+                                <state key="normal" title="3"/>
+                                <connections>
+                                    <action selector="buttonDidClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3Lr-fX-PaA"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FLz-Mw-Gvc">
+                                <state key="normal" title="2"/>
+                                <connections>
+                                    <action selector="buttonDidClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8BH-8D-EYO"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K8T-P3-9AV">
+                                <state key="normal" title="4"/>
+                                <connections>
+                                    <action selector="buttonDidClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Kfm-Mt-fsb"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="K8T-P3-9AV" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="68T-N5-1g2"/>
                             <constraint firstItem="Ryk-Qb-N6Y" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="DAr-p9-0bv"/>
+                            <constraint firstItem="Ryk-Qb-N6Y" firstAttribute="leading" secondItem="FLz-Mw-Gvc" secondAttribute="trailing" constant="5" id="EGZ-9S-Ntx"/>
+                            <constraint firstItem="fdO-kZ-PGO" firstAttribute="leading" secondItem="Ryk-Qb-N6Y" secondAttribute="trailing" constant="5" id="jHF-py-uoJ"/>
                             <constraint firstItem="Ryk-Qb-N6Y" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jgO-7m-1tl"/>
+                            <constraint firstItem="fdO-kZ-PGO" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="mw6-9Q-ZhI"/>
+                            <constraint firstItem="FLz-Mw-Gvc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="wNV-nU-Z1O"/>
+                            <constraint firstItem="K8T-P3-9AV" firstAttribute="leading" secondItem="fdO-kZ-PGO" secondAttribute="trailing" constant="5" id="yzh-If-WxN"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="CEA-ve-qnX"/>

@@ -23,12 +23,12 @@
 /**
  是否选中当前日期
  */
-@property (assign, nonatomic, getter=isSelectedCurrentDate) BOOL selectedCurrentDate;
+//@property (assign, nonatomic, getter=isSelectedCurrentDate) BOOL selectedCurrentDate;
 
 /**
  是否可以选中未来的日期
  */
-@property (assign, nonatomic, getter=isAllowSelectedFutureDate) BOOL allowSelectedFutureDate;
+//@property (assign, nonatomic, getter=isAllowSelectedFutureDate) BOOL allowSelectedFutureDate;
 
 /**
  是否显示描述string

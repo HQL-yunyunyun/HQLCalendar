@@ -39,11 +39,12 @@
 
 - (void)drawShape:(HQLDrawGeometricShape)shape color:(UIColor *)color {
     [self.currentLayer removeFromSuperlayer];
+    self.currentLayer.strokeColor = nil;
     self.currentLayer.fillColor = color.CGColor;
     UIBezierPath *path = nil;
     
-    CGFloat width = self.frame.size.width - 2;
-    CGFloat height = self.frame.size.height - 2;
+    CGFloat width = self.frame.size.width - 3;
+    CGFloat height = self.frame.size.height - 3;
     CGFloat x = (self.frame.size.width - width) * 0.5;
     CGFloat y = (self.frame.size.height - height) * 0.5 + 1;
     
@@ -66,8 +67,8 @@
             y += height * 0.5;
             CGFloat radius = width * 0.5;
             path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(x, y) radius:radius startAngle:M_PI_2 endAngle:M_PI_2 + M_PI  clockwise:YES];
-            [path addLineToPoint:CGPointMake(x + radius + 1, y - height * 0.5)];
-            [path addLineToPoint:CGPointMake(x + radius + 1, y + height * 0.5)];
+            [path addLineToPoint:CGPointMake(x + radius + 1.5, y - height * 0.5)];
+            [path addLineToPoint:CGPointMake(x + radius + 1.5, y + height * 0.5)];
             [path closePath];
             break;
         }
@@ -77,9 +78,16 @@
             y += height * 0.5;
             CGFloat radius = width * 0.5;
             path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(x, y) radius:radius startAngle:M_PI_2 endAngle:M_PI_2 + M_PI  clockwise:NO];
-            [path addLineToPoint:CGPointMake(x - radius - 1, y - height * 0.5)];
-            [path addLineToPoint:CGPointMake(x - radius - 1, y + height * 0.5)];
+            [path addLineToPoint:CGPointMake(x - radius - 1.5, y - height * 0.5)];
+            [path addLineToPoint:CGPointMake(x - radius - 1.5, y + height * 0.5)];
             [path closePath];
+            break;
+        }
+        case drawGeometricShapeCircularRing: {
+            // 圆环
+            path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(width * 0.5 + x, height * 0.5 + y) radius:width * 0.5 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
+            self.currentLayer.fillColor = nil;
+            self.currentLayer.strokeColor = self.color.CGColor;
             break;
         }
         case drawGeometricShapeNone: {

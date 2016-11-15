@@ -25,8 +25,10 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)buttonDidClick:(id)sender {
-    [self.navigationController pushViewController:[testController new] animated:YES];
+- (IBAction)buttonDidClick:(UIButton *)sender {
+    testController *test = [testController new];
+    test.mode = sender.tag;
+    [self.navigationController pushViewController:test animated:YES];
 }
 
 

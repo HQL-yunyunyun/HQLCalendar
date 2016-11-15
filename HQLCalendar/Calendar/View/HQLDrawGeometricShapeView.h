@@ -13,6 +13,7 @@ typedef enum {
     drawGeometricShapeRect ,                           // 长方形
     drawGeometricShapeLeftHalfCircular,           // 左半圆 右半正方形
     drawGeometricShapeRightHalfCircular,        // 右半圆 左半正方形
+    drawGeometricShapeCircularRing  ,             //  圆环
     drawGeometricShapeNone                           //  空白
 } HQLDrawGeometricShape;
 
