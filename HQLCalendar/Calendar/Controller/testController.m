@@ -8,6 +8,7 @@
 
 #import "testController.h"
 #import "HQLCalendarView.h"
+#import "HQLCalendar.h"
 
 #define kWeekdayNum 7
 
@@ -25,7 +26,11 @@
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     HQLCalendarView *view = [[HQLCalendarView alloc] initWithFrame:self.view.bounds dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
+    CGRect viewf = view.frame;
+    viewf.origin.y = 100;
+    view.frame = viewf;
     view.delegate = self;
+    [self.view addSubview:view];
     if (self.mode == 1) {
         view.selectionStyle = calendarViewSelectionStyleWeek;
         view.allowSelectedFutureDate = NO;
@@ -37,15 +42,14 @@
     } else if (self.mode == 3) {
         view.selectionStyle = calendarViewSelectionStyleDay;
         view.allowSelectedFutureDate = NO;
-    } else {
+    } else if (self.mode == 4) {
         view.selectionStyle = calendarViewSelectionStyleDay;
         view.allowSelectedFutureDate = YES;
+    } else if (self.mode == 5) {
+        [view setHidden:YES];
+        HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
+        [self.view addSubview:calendar];
     }
-    CGRect viewf = view.frame;
-    viewf.origin.y = 100;
-    view.frame = viewf;
-    
-    [self.view addSubview:view];
 }
 
 - (void)calendarView:(HQLCalendarView *)caledarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {

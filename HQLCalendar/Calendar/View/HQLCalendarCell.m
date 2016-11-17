@@ -61,6 +61,8 @@
     _showDescString = showDescString;
     if (showDescString) {
         [self addSubview:self.descLabel];
+    } else {
+        [self.descLabel removeFromSuperview];
     }
 }
 
