@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A1A4B531DDEFF00006F05EB /* HQLDateModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1A4B521DDEFF00006F05EB /* HQLDateModel.m */; };
 		4A2FFA621DDAF703007EBC33 /* HQLCalendar.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A2FFA611DDAF702007EBC33 /* HQLCalendar.m */; };
 		4AB03F991DD319BA00C0C7C9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03F981DD319BA00C0C7C9 /* main.m */; };
 		4AB03F9C1DD319BA00C0C7C9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03F9B1DD319BA00C0C7C9 /* AppDelegate.m */; };
@@ -22,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A1A4B511DDEFF00006F05EB /* HQLDateModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLDateModel.h; sourceTree = "<group>"; };
+		4A1A4B521DDEFF00006F05EB /* HQLDateModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLDateModel.m; sourceTree = "<group>"; };
 		4A2FFA601DDAF702007EBC33 /* HQLCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLCalendar.h; sourceTree = "<group>"; };
 		4A2FFA611DDAF702007EBC33 /* HQLCalendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalendar.m; sourceTree = "<group>"; };
 		4AB03F941DD319BA00C0C7C9 /* HQLCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -129,6 +132,8 @@
 		4AB03FB51DD31A3700C0C7C9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				4A1A4B511DDEFF00006F05EB /* HQLDateModel.h */,
+				4A1A4B521DDEFF00006F05EB /* HQLDateModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -234,6 +239,7 @@
 				4AB03F9C1DD319BA00C0C7C9 /* AppDelegate.m in Sources */,
 				4AB03F991DD319BA00C0C7C9 /* main.m in Sources */,
 				4AB03FC91DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m in Sources */,
+				4A1A4B531DDEFF00006F05EB /* HQLDateModel.m in Sources */,
 				4AB03FBD1DD320E100C0C7C9 /* testController.m in Sources */,
 				4AB03FC31DD45B5E00C0C7C9 /* HQLCalendarCell.m in Sources */,
 				4AB03FC61DD4894300C0C7C9 /* UIView+ST.m in Sources */,

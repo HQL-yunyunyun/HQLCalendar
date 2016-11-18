@@ -71,6 +71,7 @@
     [self.dateLabel setText:@""];
     if (dateModel.isZero == YES) {
         self.selectedView.shape = drawGeometricShapeNone;
+        [self setShowDescString:NO];
         return;
     }
     [self.dateLabel setText:[NSString stringWithFormat:@"%ld", dateModel.day]];
@@ -79,6 +80,7 @@
     if (!dateModel.isAllowSelectedFutureDate) {
         // 不能选择未来的日期
         [self.dateLabel setTextColor:HQLColor(170, 170, 170)];
+        self.selectedView.shape = drawGeometricShapeNone;
         [self setShowDescString:NO];
         return;
     }

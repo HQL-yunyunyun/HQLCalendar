@@ -10,7 +10,6 @@
 #import "HQLCalendarCell.h"
 #import "UIView+ST.h"
 
-#define kWeekdayNum 7 // 一周七天 / 从星期天开始
 #define kCalenderCellReuseID @"calenderCellReuseID" // reuseID
 #define kItemWidth (self.collectionViewWidth / kWeekdayNum) // collectionView item的宽度
 #define kItemHeight (kItemWidth * 0.8) // collectionView item的高度
@@ -73,34 +72,37 @@
 
 #pragma mark - event
 
+// 刷新
 - (void)reloadData {
     [self calcuateViewFrame];
 }
 
-- (NSIndexPath *)indexPathWithDateModel:(HQLDateModel *)model currentIndexPath:(NSIndexPath *)indexPath {
-    return [NSIndexPath indexPathForItem:[self.dataSource indexOfObject:model] inSection:indexPath.section];
+// 获取week的日期数组
+- (NSMutableArray <NSIndexPath *>*)getWeekIndexPathWithDate:(HQLDateModel *)date isSeleted:(BOOL)selected recordArray:(NSMutableArray <HQLDateModel *>*)recordArray{
+    if (date == nil) return nil;
+    NSMutableArray *indexPathArray = [NSMutableArray array];
+    NSInteger front = [date weekdayOfCurrentDate] - 1; // 求出星期天到当前日期的天数
+    NSInteger back = 7 - [date weekdayOfCurrentDate]; // 求出当前日期到星期六的天数
+    [self setupWeekIndexPath:indexPathArray recordArray:recordArray region:front isFront:YES currentIndexPath:[self getIndexOfDate:date] isSelected:selected];
+    [self setupWeekIndexPath:indexPathArray recordArray:recordArray region:back isFront:NO currentIndexPath:[self getIndexOfDate:date] isSelected:selected];
+    return indexPathArray;
 }
 
-- (void)setupWeekRecordWithIndexPath:(NSMutableArray *)indexPath region:(NSInteger)region isFront:(BOOL)yesOrNo currentDate:(HQLDateModel *)currentDate currentIndexPath:(NSIndexPath *)currentIndexPath {
-    NSInteger currentIndex = [self.dataSource indexOfObject:currentDate];
+// 设置week的in的Path
+- (void)setupWeekIndexPath:(NSMutableArray *)indexPath recordArray:(NSMutableArray <HQLDateModel *>*)recordArray region:(NSInteger)region isFront:(BOOL)yesOrNo currentIndexPath:(NSIndexPath *)currentIndexPath isSelected:(BOOL)selected{
     HQLDateModel *lastDate = nil;
     for (int i = (yesOrNo ? 0 : 1) ; i <= region; i++) {
         NSInteger sign = yesOrNo ? -1 : 1;
-        HQLDateModel *date = self.dataSource[currentIndex + (i * sign)];
-        if (date.isZero == YES || ([date compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1 && !self.isAllowSelectedFutureDate))  {
-//            lastDate.hour = ( yesOrNo ? 0 : 23);
-//            lastDate.second = ( yesOrNo ? 0 : 59);
-//            lastDate.minute = ( yesOrNo ? 0 : 59);
-            break;
-        }
-        date.selected = YES;
+        HQLDateModel *date = self.dataSource[currentIndexPath.item + (i * sign)];
+        if (date.isZero == YES || ([date compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1 && !self.isAllowSelectedFutureDate)) break;
+        date.selected = selected;
         // 要保持顺序
         if (yesOrNo) {
-            [self.weekRecord insertObject:date atIndex:0];
+            [recordArray insertObject:date atIndex:0];
         } else {
-            [self.weekRecord addObject:date];
+            [recordArray addObject:date];
         }
-        [indexPath addObject:[self indexPathWithDateModel:date currentIndexPath:currentIndexPath]];
+        [indexPath addObject:[self getIndexOfDate:date]];
         lastDate = date;
     }
 }
@@ -108,19 +110,35 @@
 // 只处理一周的日期部分不在本月的情况
 - (HQLDateModel *)setupWeekBeginDateAndEndDateWithRegion:(NSInteger)region isFront:(BOOL)yesOrNo currentDate:(HQLDateModel *)currentDate {
     NSInteger year = currentDate.year;
-    NSInteger month = currentDate.month + (yesOrNo ? -1 : 1);
-    if (currentDate.month == (yesOrNo ? 1 : 12)) {
-        year = yesOrNo ? currentDate.year - 1 : currentDate.year + 1;
-        month = yesOrNo ? 12 : 1;
-    }
-    HQLDateModel *date = [[HQLDateModel alloc] initWithYear:year month:month day:1];
+    NSInteger month = currentDate.month;
+    NSInteger day = currentDate.day + (yesOrNo ? -region : region);
+    
     if (yesOrNo) {
-        date.day = [HQLDateModel numberOfDaysInMonth:month year:year] - labs((currentDate.day - region));
+        if ((currentDate.day - region - 1) < 0) {
+            month = currentDate.month - 1;
+            day = [HQLDateModel numberOfDaysInMonth:month year:year] - labs((currentDate.day - region));
+        }
+    } else {
+        if ((currentDate.day + region) > [currentDate numberOfDaysInCurrentMonth]) {
+            month = currentDate.month +1;
+            day = labs(((currentDate.day + region) - [currentDate numberOfDaysInCurrentMonth]));
+        }
+    }
+    
+    if (month < 1) {
+        year -= 1;
+        month = 12;
+    } else if (month > 12) {
+        year += 1;
+        month = 1;
+    }
+    
+    HQLDateModel *date = [[HQLDateModel alloc] initWithYear:year month:month day:day];
+    if (yesOrNo) {
         date.hour = 0;
         date.minute = 0;
         date.second = 0;
     } else {
-        date.day = labs(((currentDate.day + region) - [currentDate numberOfDaysInCurrentMonth]));
         // 比较,若date > currentDate,则返回currentDate
         if ([date compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1 && !self.isAllowSelectedFutureDate) {
             date.day = [[HQLDateModel alloc] initCurrentDate].day;
@@ -130,96 +148,6 @@
         date.second = 59;
     }
     return date;
-}
-
-#pragma mark - collection view delegate
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    HQLDateModel *model = self.dataSource[indexPath.item];
-    if (model.isZero == YES || model.isAllowSelectedFutureDate == NO) return;
-    HQLDateModel *begin = nil;
-    HQLDateModel *end = nil;
-    
-    if (self.selectionStyle == calendarViewSelectionStyleDay) {
-        if (self.dayRecord != model) {
-            self.dayRecord.selected = NO;
-            model.selected = YES;
-            if (self.dayRecord) {
-                [collectionView reloadItemsAtIndexPaths:@[[self indexPathWithDateModel:self.dayRecord currentIndexPath:indexPath]]];
-            }
-            [collectionView reloadItemsAtIndexPaths:@[indexPath]];
-            self.dayRecord = model;
-        }
-        // 设置区间
-        begin = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:model.day hour:0 minute:0 second:0];
-        end = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:model.day hour:23 minute:59 second:59];
-        
-    } else if (self.selectionStyle == calendarViewSelectionStyleWeek) {
-        // 判断选择的是否是当前选择的周
-        BOOL isCurrentWeek = NO;
-        for (HQLDateModel *date in self.weekRecord) {
-            if (date == model) {
-                isCurrentWeek = YES;
-            }
-        }
-        
-        NSInteger front = [model weekdayOfCurrentDate] - 1; // 求出星期天到当前日期的天数
-        NSInteger back = 7 - [model weekdayOfCurrentDate]; // 求出当前日期到星期六的天数
-        if (isCurrentWeek == NO) {
-            NSMutableArray *oldIndexPath = [NSMutableArray arrayWithCapacity:self.weekRecord.count];
-            for (HQLDateModel *date in self.weekRecord) {
-                date.selected = NO;
-                [oldIndexPath addObject:[self indexPathWithDateModel:date currentIndexPath:indexPath]];
-            }
-            [self.weekRecord removeAllObjects];
-            [collectionView reloadItemsAtIndexPaths:oldIndexPath];
-            
-            NSMutableArray *newIndexPath = [NSMutableArray array];
-            [self setupWeekRecordWithIndexPath:newIndexPath region:front isFront:YES currentDate:model currentIndexPath:indexPath];
-            [self setupWeekRecordWithIndexPath:newIndexPath region:back isFront:NO currentDate:model currentIndexPath:indexPath];
-            [collectionView reloadItemsAtIndexPaths:newIndexPath];
-        }
-       
-        // 其他时间 --- 默认的做法
-//        begin = self.weekRecord.firstObject;
-//        end = self.weekRecord.lastObject;
-        begin = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:(model.day - front) hour:0 minute:0 second:0];
-        end = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:(model.day + back) hour:23 minute:59 second:59];
-        if ([end compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1&& !self.isAllowSelectedFutureDate) {
-            end.day = [[HQLDateModel alloc] initCurrentDate].day;
-        }
-        if ((model.day - front) < 0) {
-            // 一周的时间中，有日期是在前一个月
-            begin = [self setupWeekBeginDateAndEndDateWithRegion:front isFront:YES currentDate:model];
-        } else if ((model.day + back) > [model numberOfDaysInCurrentMonth]) {
-            // 一周的时间中，有日期是在后一个月
-            end = [self setupWeekBeginDateAndEndDateWithRegion:back isFront:NO currentDate:model];
-        }
-    } else if (self.selectionStyle == calendarViewSelectionStyleCustom) {
-    
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(calendarView:selectionStyle:beginDate:endDate:)]) {
-        [self.delegate calendarView:self selectionStyle:self.selectionStyle beginDate:begin endDate:end];
-    }
-}
-
-#pragma mark - collection view dataSource
-
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 1;
-}
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.dataSource.count;
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    HQLCalendarCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCalenderCellReuseID forIndexPath:indexPath];
-    cell.HQL_SelectionStyle = self.selectionStyle;
-    cell.showDescString = YES;
-    cell.dateModel = self.dataSource[indexPath.item];
-    return cell;
 }
 
 - (void)calcuateViewFrame {
@@ -251,11 +179,138 @@
     self.height = self.viewHeight;
 }
 
+// 获取与date相同日期的index
+- (NSIndexPath *)getIndexOfDate:(HQLDateModel *)date {
+    NSInteger firstRowBlankCount = [HQLDateModel weekdayOfYear:date.year month:date.month day:1] - 1;
+    return [NSIndexPath indexPathForItem:(firstRowBlankCount + date.day - 1) inSection:0];
+}
+
+// 选择本月第一个星期或最后一个星期
+- (void)selectedFirstOrLastWeek:(BOOL)yesOrNo isSelectFirstWeek:(BOOL)isSelectFirst {
+    if (self.dataSource.count !=0 && yesOrNo && self.selectionStyle == calendarViewSelectionStyleWeek) {
+        NSInteger day = isSelectFirst ? 1 : [self.dateModel numberOfDaysInCurrentMonth];
+        [self selectDate:[[HQLDateModel alloc] initWithYear:self.dateModel.year month:self.dateModel.month day:day]];
+    }
+}
+
+// 选择或取消选择date
+- (void)selectOrDeselectDate:(HQLDateModel *)date isSelect:(BOOL)yesOrNo {
+    if (date == nil) return;
+    if (self.selectionStyle != calendarViewSelectionStyleCustom) {
+        NSMutableArray *indexPathArray = [NSMutableArray array];
+        if (self.selectionStyle == calendarViewSelectionStyleDay) {
+            // 天
+            NSIndexPath *indexPath = [self getIndexOfDate:date];
+            [indexPathArray addObject:indexPath];
+            HQLDateModel *model = self.dataSource[indexPath.item];
+            model.selected = yesOrNo;
+            self.dayRecord = yesOrNo ? model : nil;
+        } else if (self.selectionStyle == calendarViewSelectionStyleWeek) {
+            // 周
+            indexPathArray = [self getWeekIndexPathWithDate:date isSeleted:yesOrNo recordArray:yesOrNo ? self.weekRecord : nil];
+            if (!yesOrNo) {
+                [self.weekRecord removeAllObjects];
+            }
+        }
+        [self.collectionView reloadItemsAtIndexPaths:indexPathArray];
+    } else {
+        // 选择模式为自定义
+    }
+}
+
+- (void)selectDate:(HQLDateModel *)date {
+    [self selectOrDeselectDate:date isSelect:YES];
+}
+
+- (void)deselectDate:(HQLDateModel *)date {
+    [self selectOrDeselectDate:date isSelect:NO];
+}
+
+#pragma mark - collection view delegate
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    HQLDateModel *model = self.dataSource[indexPath.item];
+    if (model.isZero == YES || model.isAllowSelectedFutureDate == NO) return;
+    HQLDateModel *begin = nil;
+    HQLDateModel *end = nil;
+    
+    if (self.selectionStyle == calendarViewSelectionStyleDay) {
+        if (self.dayRecord != model) {
+            [self deselectDate:self.dayRecord];
+            [self selectDate:model];
+        }
+        // 设置区间
+        begin = [self setupWeekBeginDateAndEndDateWithRegion:0 isFront:YES currentDate:model];
+        end = [self setupWeekBeginDateAndEndDateWithRegion:0 isFront:NO currentDate:model];
+//        begin = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:model.day hour:0 minute:0 second:0];
+//        end = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:model.day hour:23 minute:59 second:59];
+        
+    } else if (self.selectionStyle == calendarViewSelectionStyleWeek) {
+        // 判断选择的是否是当前选择的周
+        BOOL isCurrentWeek = NO;
+        for (HQLDateModel *date in self.weekRecord) {
+            if (date == model) {
+                isCurrentWeek = YES;
+            }
+        }
+
+        if (isCurrentWeek == NO) {
+            [self deselectDate:self.weekRecord.firstObject];
+            [self selectDate:model];
+        }
+       
+        // 其他时间 --- 默认的做法
+        NSInteger front = [model weekdayOfCurrentDate] - 1; // 求出星期天到当前日期的天数
+        NSInteger back = 7 - [model weekdayOfCurrentDate]; // 求出当前日期到星期六的天数
+        
+        begin = [self setupWeekBeginDateAndEndDateWithRegion:front isFront:YES currentDate:model];
+        end = [self setupWeekBeginDateAndEndDateWithRegion:back isFront:NO currentDate:model];
+        
+//        begin = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:(model.day - front) hour:0 minute:0 second:0];
+//        end = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:(model.day + back) hour:23 minute:59 second:59];
+//        
+//        if ([end compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1&& !self.isAllowSelectedFutureDate) {
+//            end.day = [[HQLDateModel alloc] initCurrentDate].day;
+//        }
+//        if ((model.day - front - 1) < 0) {
+//            // 一周的时间中，有日期是在前一个月
+//            begin = [self setupWeekBeginDateAndEndDateWithRegion:front isFront:YES currentDate:model];
+//        } else if ((model.day + back) > [model numberOfDaysInCurrentMonth]) {
+//            // 一周的时间中，有日期是在后一个月
+//            end = [self setupWeekBeginDateAndEndDateWithRegion:back isFront:NO currentDate:model];
+//        }
+        
+    } else if (self.selectionStyle == calendarViewSelectionStyleCustom) {
+    
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(calendarView:selectionStyle:beginDate:endDate:)]) {
+        [self.delegate calendarView:self selectionStyle:self.selectionStyle beginDate:begin endDate:end];
+    }
+}
+
+#pragma mark - collection view dataSource
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.dataSource.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    HQLCalendarCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCalenderCellReuseID forIndexPath:indexPath];
+    cell.HQL_SelectionStyle = self.selectionStyle;
+    cell.showDescString = YES;
+    cell.dateModel = self.dataSource[indexPath.item];
+    return cell;
+}
+
 #pragma mark - setter
 
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
-//    [self calcuateCollectionFrame];
     NSInteger itemWidth = frame.size.width / kWeekdayNum;
     self.collectionViewWidth = itemWidth * kWeekdayNum;
 }
@@ -314,17 +369,6 @@
         self.selectedLastWeek = NO;
     }
     [self selectedFirstOrLastWeek:selectedFirstWeek isSelectFirstWeek:YES];
-}
-
-- (void)selectedFirstOrLastWeek:(BOOL)yesOrNo isSelectFirstWeek:(BOOL)isSelectFirst {
-    if (self.dataSource.count !=0 && yesOrNo && self.selectionStyle == calendarViewSelectionStyleWeek) {
-        // 选择第一个星期
-        NSInteger day = isSelectFirst ? 1 : [self.dateModel numberOfDaysInCurrentMonth];
-        NSInteger weekday = [HQLDateModel weekdayOfYear:self.dateModel.year month:self.dateModel.month day:day];
-        NSInteger item = isSelectFirst ? (weekday - 1) : (self.dataSource.count - (kWeekdayNum - weekday) - 1);
-        NSIndexPath *IndexPath = [NSIndexPath indexPathForItem:item inSection:0];
-        [self collectionView:self.collectionView didSelectItemAtIndexPath:IndexPath];
-    }
 }
 
 #pragma mark - getter
@@ -414,252 +458,5 @@
     }
     return _customRecord;
 }
-
-@end
-
-#pragma mark - date model
-
-@implementation HQLDateModel
-
-#pragma mark - instance method
-
-- (instancetype)initWithZero {
-    if (self = [super init]) {
-        self.zero = YES;
-    }
-    return self;
-}
-
-- (instancetype)initWithYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day hour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second {
-    if (self = [super init]) {
-        if (![self checkDataWithYear:year month:month day:day hour:hour minute:minute second:second]) {
-            return nil;
-        }
-        self.year = year;
-        self.month = month;
-        self.day = day;
-        self.hour = hour;
-        self.minute = minute;
-        self.second = second;
-        self.zero = NO;
-    }
-    return self;
-}
-
-- (instancetype)initWithYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day {
-    return [self initWithYear:year month:month day:day hour:0 minute:0 second:0];
-}
-
-- (instancetype)initwithNSDate:(NSDate *)date {
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSInteger year = [cal component:NSCalendarUnitYear fromDate:date];
-    NSInteger month = [cal component:NSCalendarUnitMonth fromDate:date];
-    NSInteger day = [cal component:NSCalendarUnitDay fromDate:date];
-    NSInteger hour = [cal component:NSCalendarUnitHour fromDate:date];
-    NSInteger minute = [cal component:NSCalendarUnitMinute fromDate:date];
-    NSInteger second = [cal component:NSCalendarUnitSecond fromDate:date];
-    return [self initWithYear:year month:month day:day hour:hour minute:minute second:second];
-}
-
-- (instancetype)initWithHQLDate:(HQLDateModel *)date {
-    return [self initWithYear:date.year month:date.month day:date.day hour:date.hour minute:date.minute second:date.second];
-}
-
-- (instancetype)initCurrentDate {
-    NSDate *date = [NSDate date];
-    NSTimeInterval timeZone = [[NSTimeZone systemTimeZone] secondsFromGMT];
-    [date dateByAddingTimeInterval:timeZone];
-    return [self initwithNSDate:date];
-}
-
-- (NSString *)description {
-    return  [NSString stringWithFormat:@"year : %ld, month : %ld, day : %ld, hour : %ld, minute : %ld, second : %ld",(long)self.year, (long)self.month, (long)self.day, (long)self.hour, (long)self.minute, (long)self.second];
-}
-
-#pragma mark - event
-
-- (NSDate *)changeToNSDate {
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [[NSDateComponents alloc] init];
-    [comp setYear:self.year];
-    [comp setMonth:self.month];
-    [comp setDay:self.day];
-    [comp setHour:self.hour];
-    [comp setMinute:self.minute];
-    [comp setSecond:self.second];
-    NSDate *date = [cal dateFromComponents:comp];
-    NSTimeInterval timeZone = [[NSTimeZone systemTimeZone] secondsFromGMT];
-    [date dateByAddingTimeInterval:timeZone];
-    return date;
-}
-
-- (BOOL)checkDataWithYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day hour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second {
-    // 判断日期是否正确
-    NSInteger maxDays = 0;
-    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
-        // 闰年
-        maxDays = 29;
-    } else {
-        // 平年
-        maxDays = 28;
-    }
-    if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-        maxDays = 31;
-    } else if (month != 2) {
-        maxDays = 30;
-    }
-    if (day > maxDays) {
-        return NO;
-    }
-    if (month < 1 || month > 12 || hour < 0 || hour > 24 || day < 1 || day > 31 || minute < 0 || minute > 60 || second < 0 || second > 60) {
-        return NO;
-    }
-    return YES;
-}
-
-- (NSInteger)numberOfDaysInCurrentMonth {
-    NSDate *date = [self changeToNSDate];
-    return [[NSCalendar currentCalendar] rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:date].length;
-}
-
-- (NSInteger)rowOfCalenderInCurrentMonth {
-    NSInteger number = [self numberOfDaysInCurrentMonth]; // 该月的天数
-    NSInteger weekday = [self weekdayOfCurrentDate]; // 1号是星期几
-    NSInteger firstRowNumber = kWeekdayNum - weekday + 1; // 日历第一行填充数据的个数
-    NSInteger remainder = (number - firstRowNumber) % kWeekdayNum; // 最后一行剩余的个数
-    // 行数 = 1(第一行) + ((每月个数 - 第一行填充的个数) / 7) +
-    return (1 + ((number - firstRowNumber) / kWeekdayNum) + (remainder == 0 ? 0 : 1));
-}
-
-- (NSInteger)weekdayOfCurrentDate {
-    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDate *date = [self changeToNSDate];
-    return [calender component:NSCalendarUnitWeekday fromDate:date];
-}
-
-- (BOOL)isEqualHQLDate:(HQLDateModel *)date {
-    return (self.year == date.year && self.month == date.month && self.day == date.day && self.minute == date.minute && self.hour == date.hour && self.second == date.second);
-}
-
-- (BOOL)isEqualHQLDateWithOutTime:(HQLDateModel *)date {
-    HQLDateModel *first = [[HQLDateModel alloc] initWithHQLDate:self];
-    HQLDateModel *second = [[HQLDateModel alloc] initWithHQLDate:date];
-    first.hour = second.hour = first.minute = second.minute = first.second = second.second = 0;
-    return [first isEqualHQLDate:second];
-}
-
-- (int)compareWithHQLDate:(HQLDateModel *)date {
-    NSTimeInterval firstTime = [[self changeToNSDate] timeIntervalSince1970];
-    NSTimeInterval secondTime = [[date changeToNSDate] timeIntervalSince1970];
-    int result = 1;
-    if (firstTime == secondTime) {
-        result = 0;
-    } else if (firstTime > secondTime) {
-        result = 1;
-    } else {
-        result = -1;
-    }
-    return result;
-}
-
-- (int)compareWithHQLDateWithOutTime:(HQLDateModel *)date {
-    HQLDateModel *first = [[HQLDateModel alloc] initWithHQLDate:self];
-    HQLDateModel *second = [[HQLDateModel alloc] initWithHQLDate:date];
-    first.hour = second.hour = first.minute = second.minute = first.second = second.second = 0;
-    return [first compareWithHQLDate:second];
-}
-
-#pragma mark - class method
-
-+ (NSInteger)rowOfCalenderInMonth:(NSInteger)month year:(NSInteger)year {
-    HQLDateModel *date = [[HQLDateModel alloc] initWithYear:year month:month day:1];
-    return [date rowOfCalenderInCurrentMonth];
-}
-
-+ (NSUInteger)numberOfDaysInMonth:(NSInteger)month year:(NSInteger)year {
-    if (month > 12 || month < 1) return 0;
-    HQLDateModel *date = [[HQLDateModel alloc] initWithYear:year month:month day:1];
-    return [date numberOfDaysInCurrentMonth];
-}
-
-+ (NSDate *)dateWithYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day {
-    NSDateComponents *comps = [[NSDateComponents alloc] init];
-    [comps setYear:year];
-    [comps setMonth:month];
-    [comps setDay:day];
-    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    return [calender dateFromComponents:comps];
-}
-
-+ (NSInteger)weekdayOfYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day {
-    return [[[HQLDateModel alloc] initWithYear:year month:month day:day] weekdayOfCurrentDate];
-}
-
-+ (instancetype)HQLDate {
-    return [[HQLDateModel alloc] initCurrentDate];
-}
-
-#pragma mark - setter
-
-- (void)setMonth:(NSInteger)month {
-    if (month < 1 || month > 12) {
-        return;
-    }
-    _month = month;
-}
-
-- (void)setHour:(NSInteger)hour {
-    if (hour < 0 || hour > 24) {
-        return;
-    }
-    _hour = hour;
-}
-
-- (void)setDay:(NSInteger)day {
-    if (day < 1 || day > 31) {
-        return;
-    }
-    _day = day;
-}
-
-- (void)setMinute:(NSInteger)minute {
-    if (minute < 0 || minute > 60) {
-        return;
-    }
-    _minute = minute;
-}
-
-- (void)setSecond:(NSInteger)second {
-    if (second < 0 || second > 60) {
-        return;
-    }
-    _second = second;
-}
-
-/* - (NSMutableArray<NSMutableArray *> *)dataSourceOfCurrentMonth {
- NSMutableArray *dataSource = [NSMutableArray arrayWithCapacity:kWeekdayNum];
- for (int i = 0; i < kWeekdayNum; i++) {
- [dataSource addObject:[NSMutableArray array]];
- }
- // 1号开始
- HQLDateMode *first = [[HQLDateMode alloc] initWithHQLDate:self];
- first.day = 1;
- NSInteger number = [first numberOfDaysInCurrentMonth];
- NSInteger lastWeekday = [first weekdayOfCurrentDate];
- [dataSource[lastWeekday - 1] addObject:first];
- for (int i = 2 ; i <= number; i++) {
- HQLDateMode *date = [[HQLDateMode alloc] initWithHQLDate:first];
- date.day = i;
- NSInteger weekday = lastWeekday == 7 ? 1 : (lastWeekday + 1);
- [dataSource[weekday - 1] addObject:date];
- lastWeekday = weekday;
- }
- return dataSource;
- }
-
-+ (NSMutableArray<NSMutableArray *> *)dataSourceOfYear:(NSInteger)year month:(NSInteger)month {
-    HQLDateMode *date = [[HQLDateMode alloc] initWithYear:year month:month day:1];
-    return [date dataSourceOfCurrentMonth];
-}*/
 
 @end

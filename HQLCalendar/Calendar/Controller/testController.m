@@ -12,7 +12,9 @@
 
 #define kWeekdayNum 7
 
-@interface testController () <HQLCalendarViewDelegate>
+#define HQLLog(log) NSLog(log)
+
+@interface testController () <HQLCalendarViewDelegate, HQLCalendarDelegate>
 
 @property (strong, nonatomic) NSMutableArray <NSMutableArray *>*dataSource;
 
@@ -47,9 +49,18 @@
         view.allowSelectedFutureDate = YES;
     } else if (self.mode == 5) {
         [view setHidden:YES];
-        HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
+        HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2016 month:2 day:1]];
+        calendar.selectionStyle = calendarViewSelectionStyleWeek;
+        calendar.delegate = self;
+//        calendar.allowSelectedFutureDate = YES;
         [self.view addSubview:calendar];
     }
+}
+
+- (void)calendar:(HQLCalendar *)calendar calendarView:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {
+    HQLLog(@"------------------------------");
+    NSLog(@"begin ---: %@ \n ------------------------ \n end ---: %@ \n", begin, end);
+    HQLLog(@"------------------------------");
 }
 
 - (void)calendarView:(HQLCalendarView *)caledarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {

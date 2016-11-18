@@ -28,6 +28,10 @@
 
 @property (weak, nonatomic) UIView *line;
 
+@property (strong, nonatomic) NSMutableArray <HQLDateModel *>*dateRecord; // 记录当前选择的日期
+
+@property (assign, nonatomic) BOOL isAnimate;
+
 @end
 
 @implementation HQLCalendar
@@ -75,22 +79,60 @@
 
 #pragma mark - event 
 
+- (void)lastOrNextMonth:(UIButton *)button {
+    if (self.isAnimate) {
+        return;
+    }
+    self.isAnimate = YES;
+}
+
+// 上一个月
 - (void)lastButtonDidClick:(UIButton *)lastButton {
+    if (self.isAnimate) {
+        return;
+    }
+    self.isAnimate = YES;
     HQLCalendarView *lastView = self.viewArray.lastObject;
     [self.viewArray removeObject:lastView];
     [self.viewArray insertObject:lastView atIndex:0];
     [self setCurrentDate:[self getDate:self.currentDate isBefore:YES]];
-    [self calculateCalendarViewFrame];
+    typeof(self) weakSelf = self;
+    [UIView animateWithDuration:0.3 animations:^{
+        [weakSelf.viewArray[0] setHidden:YES];
+        [weakSelf.viewArray[1] setHidden:NO];
+        [weakSelf.viewArray[2] setHidden:NO];
+        [weakSelf calculateCalendarViewFrame];
+    } completion:^(BOOL finished) {
+        [weakSelf.viewArray.firstObject setHidden:YES];
+        [weakSelf.viewArray.lastObject setHidden:YES];
+        weakSelf.isAnimate = NO;
+    }];
 }
 
+// 下一个月
 - (void)nextButtonDidClick:(UIButton *)nextButton {
+    if (self.isAnimate) {
+        return;
+    }
+    self.isAnimate = YES;
     HQLCalendarView *firstView = self.viewArray.firstObject;
     [self.viewArray removeObject:firstView];
     [self.viewArray addObject:firstView];
     [self setCurrentDate:[self getDate:self.currentDate isBefore:NO]];
-    [self calculateCalendarViewFrame];
+    typeof(self) weakSelf = self;
+    [UIView animateWithDuration:0.3 animations:^{
+        [weakSelf.viewArray[0] setHidden:NO];
+        [weakSelf.viewArray[1] setHidden:NO];
+        [weakSelf.viewArray[2] setHidden:YES];
+        [weakSelf calculateCalendarViewFrame];
+    } completion:^(BOOL finished) {
+        [weakSelf.viewArray.firstObject setHidden:YES];
+        [weakSelf.viewArray.lastObject setHidden:YES];
+        weakSelf.isAnimate = NO;
+    }];
 }
 
+// 获取 上个月 或 下个月 的date
 - (HQLDateModel *)getDate:(HQLDateModel *)date isBefore:(BOOL)yesOrNo {
     HQLDateModel *targetDate = [[HQLDateModel alloc] initWithHQLDate:date];
     NSInteger conditionMonth = yesOrNo ? 1 : 12;
@@ -104,6 +146,7 @@
     return targetDate;
 }
 
+ // 计算frame值
 - (void)calculateCalendarViewFrame {
     for (int i = 0; i < 3; i++) {
         HQLCalendarView *view = self.viewArray[i];
@@ -119,9 +162,47 @@
     self.height = CGRectGetMaxY(self.viewArray[1].frame);
 }
 
+// 选择当前日期
+- (void)selectRecordDate {
+    HQLCalendarView *view = self.viewArray[1];
+    [self selectOrDeselectRecordDate:view isSelected:YES];
+}
+
+// 取消选择当前日期
+- (void)deselectRecordDate {
+    for (int i = 0; i < 3 ; i++) {
+        HQLCalendarView *view = self.viewArray[i];
+        if (i != 1) {
+            [self selectOrDeselectRecordDate:view isSelected:NO];
+        }
+    }
+}
+
+// 选择或取消当前日期
+- (void)selectOrDeselectRecordDate:(HQLCalendarView *)view isSelected:(BOOL)selected{
+    for (HQLDateModel *date in self.dateRecord) {
+        if (view.dateModel.year == date.year && view.dateModel.month == date.month) {
+            if (selected) {
+                [view selectDate:date];
+            } else {
+                [view deselectDate:date];
+            }
+        }
+    }
+}
+
 #pragma mark - calendar view delegate
 
 - (void)calendarView:(HQLCalendarView *)caledarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {
+    // 取消当前选择的日期
+    if (![begin isEqualHQLDateWithOutTime:self.dateRecord.firstObject] && ![end isEqualHQLDateWithOutTime:self.dateRecord.lastObject]) {
+        [self deselectRecordDate];
+        // 记录当前选择的日期
+        [self.dateRecord removeAllObjects];
+        [self.dateRecord addObject:begin];
+        [self.dateRecord addObject:end];
+    }
+    
     if ([self.delegate respondsToSelector:@selector(calendar:calendarView:selectionStyle:beginDate:endDate:)]) {
         [self.delegate calendar:self calendarView:caledarView selectionStyle:style beginDate:begin endDate:end];
     }
@@ -193,13 +274,21 @@
             view.delegate = self;
             view.selectionStyle = self.selectionStyle;
             view.allowSelectedFutureDate = self.allowSelectedFutureDate;
+            view.hidden = (i != 1);
+            [view reloadData];
             [self addSubview:view];
             [array addObject:view];
         }
         _viewArray = array;
-//        [self setCurrentDate:self.currentDate];
     }
     return _viewArray;
+}
+
+- (NSMutableArray<HQLDateModel *> *)dateRecord {
+    if (!_dateRecord) {
+        _dateRecord = [NSMutableArray array];
+    }
+    return _dateRecord;
 }
 
 #pragma mark - setter
@@ -213,23 +302,21 @@
     [self.titleLabel setText:[formatter stringFromDate:[currentDate changeToNSDate]]];
     
     // 设置日期
-//    if (self.viewArray.count == 0 || self.viewArray == nil) return;
     if (![self.viewArray[0].dateModel isEqualHQLDateWithOutTime:[self getDate:currentDate isBefore:YES]]) {
         // 前一个月是否相等
-        NSLog(@"1------%@", self.viewArray[0].dateModel);
         self.viewArray.firstObject.dateModel = [self getDate:currentDate isBefore:YES];
         [self.viewArray.firstObject reloadData];
     }
     if (![self.viewArray[1].dateModel isEqualHQLDateWithOutTime:currentDate]) {
-        NSLog(@"2------%@", self.viewArray[1].dateModel);
         self.viewArray[1].dateModel = currentDate;
         [self.viewArray[1] reloadData];
     }
     if (![self.viewArray[2].dateModel isEqualHQLDateWithOutTime:[self getDate:currentDate isBefore:NO]]) {
-        NSLog(@"3------%@", self.viewArray[2].dateModel);
         self.viewArray[2].dateModel = [self getDate:currentDate isBefore:NO];
         [self.viewArray[2] reloadData];
     }
+    // 选择当前选择的日期
+    [self selectRecordDate];
 }
 
 - (void)setAllowSelectedFutureDate:(BOOL)allowSelectedFutureDate {
