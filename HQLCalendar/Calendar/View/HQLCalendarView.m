@@ -46,7 +46,7 @@
 @implementation HQLCalendarView
 
 - (void)dealloc {
-    NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
+    HQLLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
 - (instancetype)initWithFrame:(CGRect)frame dateModel:(HQLDateModel *)dateModel {

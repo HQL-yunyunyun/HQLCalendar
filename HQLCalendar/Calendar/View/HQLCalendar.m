@@ -11,6 +11,9 @@
 #import "UIView+ST.h"
 
 #define kTitleViewHeight 30
+#define kLastButtonTag 2112
+#define kNextButtonTag 1221
+
 
 @interface HQLCalendar () <HQLCalendarViewDelegate>
 
@@ -45,7 +48,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
+    HQLLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
 - (void)layoutSubviews {
@@ -74,56 +77,31 @@
 
 - (void)prepareUI {
     [self addSubview:self.titleView];
-    [self setBackgroundColor:[UIColor redColor]];
+//    [self setBackgroundColor:[UIColor redColor]];
 }
 
 #pragma mark - event 
 
 - (void)lastOrNextMonth:(UIButton *)button {
-    if (self.isAnimate) {
+    if (self.isAnimate || (button.tag != kLastButtonTag && button.tag != kNextButtonTag)) {
         return;
     }
     self.isAnimate = YES;
-}
-
-// 上一个月
-- (void)lastButtonDidClick:(UIButton *)lastButton {
-    if (self.isAnimate) {
-        return;
+    BOOL isLastButton = button.tag == kLastButtonTag;
+    HQLCalendarView *operationView = isLastButton ? self.viewArray.lastObject : self.viewArray.firstObject;
+    [self.viewArray removeObject:operationView];
+    if (isLastButton) {
+        [self.viewArray insertObject:operationView atIndex:0];
+    } else {
+        [self.viewArray addObject:operationView];
     }
-    self.isAnimate = YES;
-    HQLCalendarView *lastView = self.viewArray.lastObject;
-    [self.viewArray removeObject:lastView];
-    [self.viewArray insertObject:lastView atIndex:0];
-    [self setCurrentDate:[self getDate:self.currentDate isBefore:YES]];
+    
+    [self setCurrentDate:[self getDate:self.currentDate isBefore:isLastButton]];
     typeof(self) weakSelf = self;
     [UIView animateWithDuration:0.3 animations:^{
-        [weakSelf.viewArray[0] setHidden:YES];
+        [weakSelf.viewArray[0] setHidden:isLastButton];
         [weakSelf.viewArray[1] setHidden:NO];
-        [weakSelf.viewArray[2] setHidden:NO];
-        [weakSelf calculateCalendarViewFrame];
-    } completion:^(BOOL finished) {
-        [weakSelf.viewArray.firstObject setHidden:YES];
-        [weakSelf.viewArray.lastObject setHidden:YES];
-        weakSelf.isAnimate = NO;
-    }];
-}
-
-// 下一个月
-- (void)nextButtonDidClick:(UIButton *)nextButton {
-    if (self.isAnimate) {
-        return;
-    }
-    self.isAnimate = YES;
-    HQLCalendarView *firstView = self.viewArray.firstObject;
-    [self.viewArray removeObject:firstView];
-    [self.viewArray addObject:firstView];
-    [self setCurrentDate:[self getDate:self.currentDate isBefore:NO]];
-    typeof(self) weakSelf = self;
-    [UIView animateWithDuration:0.3 animations:^{
-        [weakSelf.viewArray[0] setHidden:NO];
-        [weakSelf.viewArray[1] setHidden:NO];
-        [weakSelf.viewArray[2] setHidden:YES];
+        [weakSelf.viewArray[2] setHidden:!isLastButton];
         [weakSelf calculateCalendarViewFrame];
     } completion:^(BOOL finished) {
         [weakSelf.viewArray.firstObject setHidden:YES];
@@ -216,7 +194,7 @@
         [_titleView setBackgroundColor:[UIColor whiteColor]];
         
         // bottomLine
-        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, kTitleViewHeight, self.width, 0.5)];
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, kTitleViewHeight - 0.5, self.width, 0.5)];
         [line setBackgroundColor:HQLColor(220, 218, 220)];
         [_titleView addSubview:line];
         self.line = line;
@@ -234,7 +212,8 @@
         [_lastButton setTitle:@"last" forState:UIControlStateNormal];
         [_lastButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [_lastButton sizeToFit];
-        [_lastButton addTarget:self action:@selector(lastButtonDidClick:)];
+        [_lastButton setTag:kLastButtonTag];
+        [_lastButton addTarget:self action:@selector(lastOrNextMonth:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _lastButton;
 }
@@ -245,10 +224,12 @@
         [_nextButton setTitle:@"next" forState:UIControlStateNormal];
         [_nextButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [_nextButton sizeToFit];
-        [_nextButton addTarget:self action:@selector(nextButtonDidClick:)];
+        [_nextButton setTag:kNextButtonTag];
+        [_nextButton addTarget:self action:@selector(lastOrNextMonth:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _nextButton;
 }
+
 
 - (UILabel *)titleLabel {
     if (!_titleLabel) {

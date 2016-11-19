@@ -12,7 +12,7 @@
 
 #define kWeekdayNum 7
 
-#define HQLLog(log) NSLog(log)
+
 
 @interface testController () <HQLCalendarViewDelegate, HQLCalendarDelegate>
 
@@ -27,6 +27,7 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
+    CGFloat beginTime = [[NSDate date] timeIntervalSince1970] * 1000;
     HQLCalendarView *view = [[HQLCalendarView alloc] initWithFrame:self.view.bounds dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
     CGRect viewf = view.frame;
     viewf.origin.y = 100;
@@ -49,12 +50,15 @@
         view.allowSelectedFutureDate = YES;
     } else if (self.mode == 5) {
         [view setHidden:YES];
-        HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2016 month:2 day:1]];
-        calendar.selectionStyle = calendarViewSelectionStyleWeek;
+        
+        HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
+        calendar.selectionStyle = calendarViewSelectionStyleDay;
         calendar.delegate = self;
-//        calendar.allowSelectedFutureDate = YES;
+        //        calendar.allowSelectedFutureDate = YES;
         [self.view addSubview:calendar];
     }
+    CGFloat endTime = [[NSDate date] timeIntervalSince1970] * 1000;
+    HQLLog(@"%f", endTime - beginTime);
 }
 
 - (void)calendar:(HQLCalendar *)calendar calendarView:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {

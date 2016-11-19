@@ -12,6 +12,13 @@
 #define HQLColorWithAlpha(r,g,b,a) [UIColor colorWithRed:( r / 255.0)  green:( g / 255.0) blue:( b / 255.0) alpha:a]
 #define HQLColor(r,g,b) HQLColorWithAlpha(r,g,b,1)
 
+#ifdef DEBUG
+#define ZXString [NSString stringWithFormat:@"%s", __FILE__].lastPathComponent
+#define HQLLog(...) printf("<<%s 第%d行>>: %s\n\n", [ZXString UTF8String] ,__LINE__, [[NSString stringWithFormat:__VA_ARGS__] UTF8String]);
+#else
+#define HQLLog(...)
+#endif
+
 @class HQLCalendarView;
 
 @protocol HQLCalendarViewDelegate <NSObject>
