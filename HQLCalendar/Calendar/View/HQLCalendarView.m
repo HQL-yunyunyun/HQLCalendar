@@ -302,7 +302,7 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     HQLCalendarCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCalenderCellReuseID forIndexPath:indexPath];
     cell.HQL_SelectionStyle = self.selectionStyle;
-    cell.showDescString = YES;
+//    cell.showDescString = YES;
     cell.dateModel = self.dataSource[indexPath.item];
     return cell;
 }
