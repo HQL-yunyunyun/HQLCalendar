@@ -59,9 +59,11 @@
     self.titleView.width = self.width;
     self.line.width = self.width;
     
+    self.lastButton.width = 50;
     self.lastButton.y = (self.titleView.height - self.lastButton.height) * 0.5;
     self.lastButton.x = margin;
     
+    self.nextButton.width = 50;
     self.nextButton.y = (self.titleView.height - self.nextButton.height) * 0.5;
     self.nextButton.x = self.titleView.width - self.nextButton.width - margin;
     
@@ -233,7 +235,9 @@
 - (UIButton *)lastButton {
     if (!_lastButton) {
         _lastButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_lastButton setTitle:@"last" forState:UIControlStateNormal];
+//        [_lastButton setTitle:@"last" forState:UIControlStateNormal];
+        _lastButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        [_lastButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon_last_button_orange" ofType:@"png"]] forState:UIControlStateNormal];
         [_lastButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [_lastButton sizeToFit];
         [_lastButton setTag:kLastButtonTag];
@@ -245,7 +249,9 @@
 - (UIButton *)nextButton {
     if (!_nextButton) {
         _nextButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_nextButton setTitle:@"next" forState:UIControlStateNormal];
+//        [_nextButton setTitle:@"next" forState:UIControlStateNormal];
+        _nextButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+        [_nextButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon_next_button_orange" ofType:@"png"]] forState:UIControlStateNormal];
         [_nextButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [_nextButton sizeToFit];
         [_nextButton setTag:kNextButtonTag];
