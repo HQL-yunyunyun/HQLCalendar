@@ -35,7 +35,7 @@
     view.delegate = self;
     [self.view addSubview:view];
     if (self.mode == 1) {
-        view.selectionStyle = calendarViewSelectionStyleWeek;
+        view.selectionStyle = calendarViewSelectionStyleMonth;
         view.allowSelectedFutureDate = NO;
         view.selectedFirstWeek = YES;
     } else if (self.mode == 2) {
@@ -52,7 +52,7 @@
         [view setHidden:YES];
         
         HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
-        calendar.selectionStyle = calendarViewSelectionStyleDay;
+        calendar.selectionStyle = calendarViewSelectionStyleMonth;
         calendar.delegate = self;
         //        calendar.allowSelectedFutureDate = YES;
         [self.view addSubview:calendar];
@@ -63,12 +63,12 @@
 
 - (void)calendar:(HQLCalendar *)calendar calendarView:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {
     HQLLog(@"------------------------------");
-    NSLog(@"begin ---: %@ \n ------------------------ \n end ---: %@ \n", begin, end);
+    HQLLog(@"begin ---: %@ \n ------------------------ \n end ---: %@ \n", begin, end);
     HQLLog(@"------------------------------");
 }
 
 - (void)calendarView:(HQLCalendarView *)caledarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {
-    NSLog(@"begin ---: %@ \n end ---: %@ \n", begin, end);
+    HQLLog(@"begin ---: %@ \n end ---: %@ \n", begin, end);
 }
 
 - (NSInteger)rowOfMonth:(NSInteger)month year:(NSInteger)year {

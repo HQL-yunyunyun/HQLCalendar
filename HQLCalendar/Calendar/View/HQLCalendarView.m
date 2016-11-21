@@ -11,8 +11,10 @@
 #import "UIView+ST.h"
 
 #define kCalenderCellReuseID @"calenderCellReuseID" // reuseID
-#define kItemWidth (self.collectionViewWidth / kWeekdayNum) // collectionView item的宽度
-#define kItemHeight (kItemWidth * 0.8) // collectionView item的高度
+#define kItemWidth (self.selectionStyle==calendarViewSelectionStyleMonth?(self.collectionViewWidth/kMonthStyleRowCount):(self.collectionViewWidth/kWeekdayNum)) // collectionView item的宽度
+#define kItemHeight (self.selectionStyle==calendarViewSelectionStyleMonth?(kItemWidth * 0.8):kItemWidth)  // collectionView item的高度
+#define kMonthStyleRowCount 3  // monthStyle 下每行有多少个
+#define kMonthNum 12
 
 @interface HQLCalendarView () <UICollectionViewDelegate, UICollectionViewDataSource>
 
@@ -41,6 +43,9 @@
 // 记录当前选中的自定义区间
 @property (strong, nonatomic) NSMutableArray <HQLDateModel *>* customRecord;
 
+// 记录选中的月
+@property (strong, nonatomic) HQLDateModel *monthRecord;
+
 @end
 
 @implementation HQLCalendarView
@@ -53,6 +58,14 @@
     // 高度不可控
     if (self = [super initWithFrame:frame]) {
         self.dateModel = dateModel;
+        [self prepareUI];
+    }
+    return self;
+}
+
+- (instancetype)initMonthStyleViewWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        self.selectionStyle = calendarViewSelectionStyleMonth;
         [self prepareUI];
     }
     return self;
@@ -140,38 +153,38 @@
         date.second = 0;
     } else {
         // 比较,若date > currentDate,则返回currentDate
-        if ([date compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1 && !self.isAllowSelectedFutureDate) {
-            date.day = [[HQLDateModel alloc] initCurrentDate].day;
-        }
         date.hour = 23;
         date.minute = 59;
         date.second = 59;
+        if ([date compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] >= 0 && !self.isAllowSelectedFutureDate) {
+            date = [[HQLDateModel alloc] initCurrentDate];
+        }
     }
     return date;
 }
 
 - (void)calcuateViewFrame {
     // 计算headerView的frame
-    self.headerView.height = kItemHeight;
+    self.headerView.height = self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : kItemHeight;
     self.headerView.width = self.width;
     self.headerViewBottomLine.y = kItemHeight;
     self.headerViewBottomLine.width = self.width;
     // 计算label的frame
     UILabel *lastLabel = nil;
     for (UILabel *label in self.headerLabelArray) {
-        label.height = kItemHeight;
+        label.height = kItemHeight * 0.8;
         label.width = kItemWidth;
         label.y = 0;
         label.x = CGRectGetMaxX(lastLabel.frame);
         lastLabel = label;
     }
     // 计算collectionView的frame
-    self.collectionViewFlowLayout.itemSize = CGSizeMake(kItemWidth, kItemWidth);
+    self.collectionViewFlowLayout.itemSize = CGSizeMake(kItemWidth, kItemHeight);
     [self.collectionView reloadData];
     // 计算collectionView的高度
-    NSInteger row = self.dataSource.count / 7;
+    NSInteger row = self.selectionStyle == calendarViewSelectionStyleMonth ? self.dataSource.count / kMonthStyleRowCount : self.dataSource.count / kWeekdayNum;
     self.collectionView.y = CGRectGetMaxY(self.headerView.frame);
-    self.collectionView.height = row * kItemWidth;
+    self.collectionView.height = row * kItemHeight;
     self.collectionView.width = self.collectionViewWidth;
     self.collectionView.x = (self.width - self.collectionViewWidth) * 0.5;
     // 整个View的height
@@ -211,6 +224,12 @@
             if (!yesOrNo) {
                 [self.weekRecord removeAllObjects];
             }
+        } else if (self.selectionStyle == calendarViewSelectionStyleMonth) {
+            // 月
+            indexPathArray = @[[NSIndexPath indexPathForItem:date.month - 1 inSection:0]].mutableCopy;
+            HQLDateModel *model = self.dataSource[date.month - 1];
+            model.selected = yesOrNo;
+            self.monthRecord = yesOrNo ? model : nil;
         }
         [self.collectionView reloadItemsAtIndexPaths:indexPathArray];
     } else {
@@ -231,61 +250,63 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     HQLDateModel *model = self.dataSource[indexPath.item];
     if (model.isZero == YES || model.isAllowSelectedFutureDate == NO) return;
-    HQLDateModel *begin = nil;
-    HQLDateModel *end = nil;
     
-    if (self.selectionStyle == calendarViewSelectionStyleDay) {
-        if (self.dayRecord != model) {
-            [self deselectDate:self.dayRecord];
-            [self selectDate:model];
-        }
-        // 设置区间
-        begin = [self setupWeekBeginDateAndEndDateWithRegion:0 isFront:YES currentDate:model];
-        end = [self setupWeekBeginDateAndEndDateWithRegion:0 isFront:NO currentDate:model];
-//        begin = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:model.day hour:0 minute:0 second:0];
-//        end = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:model.day hour:23 minute:59 second:59];
+    if (self.selectionStyle != calendarViewSelectionStyleCustom) {
+        // 不是自定义区间
+        BOOL isDeselect = NO;
+        HQLDateModel *deselectDate = nil; // 需要取消选择的日期
+        NSInteger front = 0; // 前区间
+        NSInteger back = 0; // 后区间
         
-    } else if (self.selectionStyle == calendarViewSelectionStyleWeek) {
-        // 判断选择的是否是当前选择的周
-        BOOL isCurrentWeek = NO;
-        for (HQLDateModel *date in self.weekRecord) {
-            if (date == model) {
-                isCurrentWeek = YES;
+        if (self.selectionStyle == calendarViewSelectionStyleDay) {
+            if (self.dayRecord != model) {
+                deselectDate = self.dayRecord;
+                isDeselect = YES;
             }
+            // 设置区间
+            front = 0;
+            back = 0;
+        } else if (self.selectionStyle == calendarViewSelectionStyleWeek) {
+            // 判断选择的是否是当前选择的周
+            BOOL isCurrentWeek = NO;
+            for (HQLDateModel *date in self.weekRecord) {
+                if (date == model) {
+                    isCurrentWeek = YES;
+                }
+            }
+            if (isCurrentWeek == NO) {
+                deselectDate = self.weekRecord.firstObject;
+                isDeselect = YES;
+            }
+            
+            // 其他时间 --- 默认的做法
+            front = [model weekdayOfCurrentDate] - 1; // 求出星期天到当前日期的天数
+            back = 7 - [model weekdayOfCurrentDate]; // 求出当前日期到星期六的天数
+        } else if (self.selectionStyle == calendarViewSelectionStyleMonth) {
+            // 选择月
+            if (self.monthRecord != model) {
+                deselectDate = self.monthRecord;
+                isDeselect = YES;
+            }
+            
+            NSInteger mid = [model numberOfDaysInCurrentMonth] / 2;
+            front = mid - 1;
+            back = [model numberOfDaysInCurrentMonth] - mid;
+            
         }
-
-        if (isCurrentWeek == NO) {
-            [self deselectDate:self.weekRecord.firstObject];
+        
+        if (isDeselect) {
+            [self deselectDate:deselectDate];
             [self selectDate:model];
         }
-       
-        // 其他时间 --- 默认的做法
-        NSInteger front = [model weekdayOfCurrentDate] - 1; // 求出星期天到当前日期的天数
-        NSInteger back = 7 - [model weekdayOfCurrentDate]; // 求出当前日期到星期六的天数
+        HQLDateModel *begin = [self setupWeekBeginDateAndEndDateWithRegion:front isFront:YES currentDate:model];
+        HQLDateModel *end = [self setupWeekBeginDateAndEndDateWithRegion:back isFront:NO currentDate:model];
+        if ([self.delegate respondsToSelector:@selector(calendarView:selectionStyle:beginDate:endDate:)]) {
+            [self.delegate calendarView:self selectionStyle:self.selectionStyle beginDate:begin endDate:end];
+        }
         
-        begin = [self setupWeekBeginDateAndEndDateWithRegion:front isFront:YES currentDate:model];
-        end = [self setupWeekBeginDateAndEndDateWithRegion:back isFront:NO currentDate:model];
-        
-//        begin = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:(model.day - front) hour:0 minute:0 second:0];
-//        end = [[HQLDateModel alloc] initWithYear:model.year month:model.month day:(model.day + back) hour:23 minute:59 second:59];
-//        
-//        if ([end compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1&& !self.isAllowSelectedFutureDate) {
-//            end.day = [[HQLDateModel alloc] initCurrentDate].day;
-//        }
-//        if ((model.day - front - 1) < 0) {
-//            // 一周的时间中，有日期是在前一个月
-//            begin = [self setupWeekBeginDateAndEndDateWithRegion:front isFront:YES currentDate:model];
-//        } else if ((model.day + back) > [model numberOfDaysInCurrentMonth]) {
-//            // 一周的时间中，有日期是在后一个月
-//            end = [self setupWeekBeginDateAndEndDateWithRegion:back isFront:NO currentDate:model];
-//        }
-        
-    } else if (self.selectionStyle == calendarViewSelectionStyleCustom) {
-    
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(calendarView:selectionStyle:beginDate:endDate:)]) {
-        [self.delegate calendarView:self selectionStyle:self.selectionStyle beginDate:begin endDate:end];
+    } else {
+        // 自定义区间
     }
 }
 
@@ -326,17 +347,25 @@
     _dateModel = dateModel;
     [self.dataSource removeAllObjects];
     // 设置dataSource
-    NSInteger firstWeekday = [HQLDateModel weekdayOfYear:dateModel.year month:dateModel.month day:1];
-    NSInteger num = [dateModel numberOfDaysInCurrentMonth];
-    NSInteger count = [dateModel rowOfCalenderInCurrentMonth] * kWeekdayNum;
-    NSInteger firstRowBlankCount = firstWeekday - 1; // 第一行需要填充的个数
-    for (int i = 0; i < count; i++) {
-        if (i >= firstRowBlankCount && i < num + firstRowBlankCount) {
-            // 真正的数据
-            [self.dataSource addObject:[[HQLDateModel alloc] initWithYear:dateModel.year month:dateModel.month day:i - firstRowBlankCount + 1]];
-        } else {
-            // 填充的空白
-            [self.dataSource addObject:[[HQLDateModel alloc] initWithZero]];
+    if (self.selectionStyle != calendarViewSelectionStyleMonth) {
+        NSInteger firstWeekday = [HQLDateModel weekdayOfYear:dateModel.year month:dateModel.month day:1];
+        NSInteger num = [dateModel numberOfDaysInCurrentMonth];
+        NSInteger count = [dateModel rowOfCalenderInCurrentMonth] * kWeekdayNum;
+        NSInteger firstRowBlankCount = firstWeekday - 1; // 第一行需要填充的个数
+        for (int i = 0; i < count; i++) {
+            if (i >= firstRowBlankCount && i < num + firstRowBlankCount) {
+                // 真正的数据
+                [self.dataSource addObject:[[HQLDateModel alloc] initWithYear:dateModel.year month:dateModel.month day:i - firstRowBlankCount + 1]];
+            } else {
+                // 填充的空白
+                [self.dataSource addObject:[[HQLDateModel alloc] initWithZero]];
+            }
+        }
+    } else {
+        // 月的dataSource
+        for (int i = 0; i < kMonthNum; i++ ) {
+            NSInteger day = [HQLDateModel numberOfDaysInMonth:i+1 year:dateModel.year] / 2;
+            [self.dataSource addObject:[[HQLDateModel alloc] initWithYear:dateModel.year month:i + 1 day:day]];
         }
     }
     [self setAllowSelectedFutureDate:self.isAllowSelectedFutureDate]; // 是否允许选择未来日期
@@ -357,6 +386,7 @@
 
 - (void)setSelectedLastWeek:(BOOL)selectedLastWeek {
     _selectedLastWeek = selectedLastWeek;
+    if (self.selectionStyle == calendarViewSelectionStyleMonth) return;
     if (selectedLastWeek) {
         self.selectedFirstWeek = NO;
     }
@@ -365,10 +395,22 @@
 
 - (void)setSelectedFirstWeek:(BOOL)selectedFirstWeek {
     _selectedFirstWeek = selectedFirstWeek;
+    if (self.selectionStyle == calendarViewSelectionStyleMonth) return;
     if (selectedFirstWeek) {
         self.selectedLastWeek = NO;
     }
     [self selectedFirstOrLastWeek:selectedFirstWeek isSelectFirstWeek:YES];
+}
+
+- (void)setSelectionStyle:(HQLCalendarViewSelectionStyle)selectionStyle {
+    _selectionStyle = selectionStyle;
+    
+    if (selectionStyle == calendarViewSelectionStyleMonth) {
+        // 重新设置当前dataSource
+        [self.headerView setHidden:YES];
+        HQLDateModel *today = self.dateModel == nil ? [HQLDateModel HQLDate] : self.dateModel;
+        [self setDateModel:today];
+    }
 }
 
 #pragma mark - getter
@@ -423,7 +465,7 @@
     if (!_collectionViewFlowLayout) {
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
         flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
-        flowLayout.itemSize = CGSizeMake(kItemWidth, kItemWidth); // item 为正方形
+        flowLayout.itemSize = CGSizeMake(kItemWidth, kItemHeight); // item 为正方形
         flowLayout.minimumLineSpacing = 0;
         flowLayout.minimumInteritemSpacing = 0;
         _collectionViewFlowLayout = flowLayout;

@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLCalendar/Calendar/View/HQLCalendarCell.m"
-            timestampString = "501128283.78474"
+            timestampString = "501403969.418473"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "126"
-            endingLineNumber = "126"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
             landmarkName = "-setDateModel:"
             landmarkType = "7">
          </BreakpointContent>
@@ -36,28 +36,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLCalendar/Calendar/View/HQLCalendarCell.m"
-            timestampString = "501076797.474463"
+            timestampString = "501403969.418473"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
             landmarkName = "-setDateModel:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HQLCalendar/Calendar/View/HQLCalendarView.m"
-            timestampString = "501156479.048269"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
-            landmarkName = "-collectionView:didSelectItemAtIndexPath:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

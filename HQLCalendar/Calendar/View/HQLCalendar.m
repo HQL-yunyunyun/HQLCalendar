@@ -113,13 +113,17 @@
 // 获取 上个月 或 下个月 的date
 - (HQLDateModel *)getDate:(HQLDateModel *)date isBefore:(BOOL)yesOrNo {
     HQLDateModel *targetDate = [[HQLDateModel alloc] initWithHQLDate:date];
-    NSInteger conditionMonth = yesOrNo ? 1 : 12;
-    NSInteger sign = yesOrNo ? -1 : 1;
-    if (date.month == conditionMonth) {
-        targetDate.year += sign;
-        targetDate.month = yesOrNo ? 12 : 1;
+    if (self.selectionStyle != calendarViewSelectionStyleMonth) {
+        NSInteger conditionMonth = yesOrNo ? 1 : 12;
+        NSInteger sign = yesOrNo ? -1 : 1;
+        if (date.month == conditionMonth) {
+            targetDate.year += sign;
+            targetDate.month = yesOrNo ? 12 : 1;
+        } else {
+            targetDate.month += sign;
+        }
     } else {
-        targetDate.month += sign;
+        targetDate.year = yesOrNo ? targetDate.year - 1 : targetDate.year + 1;
     }
     return targetDate;
 }
@@ -159,14 +163,34 @@
 // 选择或取消当前日期
 - (void)selectOrDeselectRecordDate:(HQLCalendarView *)view isSelected:(BOOL)selected{
     for (HQLDateModel *date in self.dateRecord) {
-        if (view.dateModel.year == date.year && view.dateModel.month == date.month) {
-            if (selected) {
-                [view selectDate:date];
-            } else {
-                [view deselectDate:date];
+        if (self.selectionStyle == calendarViewSelectionStyleMonth) {
+            if (view.dateModel.year == date.year) {
+                if (selected) {
+                    [view selectDate:date];
+                } else {
+                    [view deselectDate:date];
+                }
+            }
+        } else {
+            if (view.dateModel.year == date.year && view.dateModel.month == date.month) {
+                if (selected) {
+                    [view selectDate:date];
+                } else {
+                    [view deselectDate:date];
+                }
             }
         }
     }
+}
+
+- (NSString *)getDateString {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    if (self.selectionStyle == calendarViewSelectionStyleMonth) {
+        [formatter setDateFormat:@"yyyy年"];
+    } else {
+        [formatter setDateFormat:@"yyyy年MM月"];
+    }
+    return [formatter stringFromDate:[self.currentDate changeToNSDate]];
 }
 
 #pragma mark - calendar view delegate
@@ -278,26 +302,33 @@
     currentDate.day = 1;
     _currentDate = currentDate;
     
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy年MM月"];
-    [self.titleLabel setText:[formatter stringFromDate:[currentDate changeToNSDate]]];
+    [self.titleLabel setText:[self getDateString]];
     
     // 设置日期
-    if (![self.viewArray[0].dateModel isEqualHQLDateWithOutTime:[self getDate:currentDate isBefore:YES]]) {
+    if (![self isResetCalendarView:self.viewArray[0] date:[self getDate:currentDate isBefore:YES]]) {
         // 前一个月是否相等
         self.viewArray.firstObject.dateModel = [self getDate:currentDate isBefore:YES];
         [self.viewArray.firstObject reloadData];
     }
-    if (![self.viewArray[1].dateModel isEqualHQLDateWithOutTime:currentDate]) {
+    if (![self isResetCalendarView:self.viewArray[1] date:currentDate]) {
         self.viewArray[1].dateModel = currentDate;
         [self.viewArray[1] reloadData];
     }
-    if (![self.viewArray[2].dateModel isEqualHQLDateWithOutTime:[self getDate:currentDate isBefore:NO]]) {
+    if (![self isResetCalendarView:self.viewArray[2] date:[self getDate:currentDate isBefore:NO]]) {
         self.viewArray[2].dateModel = [self getDate:currentDate isBefore:NO];
         [self.viewArray[2] reloadData];
     }
+    
     // 选择当前选择的日期
     [self selectRecordDate];
+}
+
+- (BOOL)isResetCalendarView:(HQLCalendarView *)view date:(HQLDateModel *)date {
+    if (self.selectionStyle == calendarViewSelectionStyleMonth) {
+        return view.dateModel.year == date.year;
+    } else {
+        return [view.dateModel isEqualHQLDateWithOutTime:date];
+    }
 }
 
 - (void)setAllowSelectedFutureDate:(BOOL)allowSelectedFutureDate {
@@ -313,6 +344,10 @@
     if (self.viewArray.count == 0 || !self.viewArray) return;
     for (HQLCalendarView *view in self.viewArray) {
         [view setSelectionStyle:selectionStyle];
+        [view reloadData];
+    }
+    if (selectionStyle == calendarViewSelectionStyleMonth) {
+        [self.titleLabel setText:[self getDateString]];
     }
 }
 

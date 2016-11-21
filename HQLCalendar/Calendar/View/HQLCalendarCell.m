@@ -55,6 +55,31 @@
     self.selectedView.height = self.height;
 }
 
+#pragma mark - event 
+
+- (NSString *)getCellSting {
+    NSString *string = nil;
+    if (self.HQL_SelectionStyle == calendarViewSelectionStyleMonth) {
+        switch (self.dateModel.month) {
+            case 1: { string = @"一月" ; break; }
+            case 2: { string = @"二月" ; break; }
+            case 3: { string = @"三月" ; break; }
+            case 4: { string = @"四月" ; break; }
+            case 5: { string = @"五月" ; break; }
+            case 6: { string = @"六月" ; break; }
+            case 7: { string = @"七月" ; break; }
+            case 8: { string = @"八月" ; break; }
+            case 9: { string = @"九月" ; break; }
+            case 10: { string = @"十月" ; break; }
+            case 11: { string = @"十一月" ; break; }
+            case 12: { string = @"十二月" ; break; }
+        }
+    } else {
+        string = [NSString stringWithFormat:@"%ld", (long)self.dateModel.day];
+    }
+    return string;
+}
+
 #pragma mark - setter 
 
 - (void)setShowDescString:(BOOL)showDescString {
@@ -66,6 +91,18 @@
     }
 }
 
+- (void)setHQL_SelectionStyle:(HQLCalendarViewSelectionStyle)HQL_SelectionStyle {
+    _HQL_SelectionStyle = HQL_SelectionStyle;
+    
+    if (HQL_SelectionStyle == calendarViewSelectionStyleMonth) {
+        [self.dateLabel setFont:[UIFont systemFontOfSize:18]];
+        [self.descLabel setFont:[UIFont systemFontOfSize:15]];
+        
+        [self.contentView.layer setBorderColor:HQLColor(220, 218, 220).CGColor];
+        [self.contentView.layer setBorderWidth:0.5];
+    }
+}
+
 - (void)setDateModel:(HQLDateModel *)dateModel {
     _dateModel = dateModel;
     [self.dateLabel setText:@""];
@@ -74,8 +111,9 @@
         [self setShowDescString:NO];
         return;
     }
-    [self.dateLabel setText:[NSString stringWithFormat:@"%ld", dateModel.day]];
-    [self.descLabel setText:@"测试"];
+    
+    [self.dateLabel setText:[self getCellSting]];
+//    [self.descLabel setText:@"测试"];
     
     if (!dateModel.isAllowSelectedFutureDate) {
         // 不能选择未来的日期
@@ -103,7 +141,7 @@
         [self.descLabel setTextColor:[UIColor whiteColor]];
         selectedColor = [UIColor orangeColor];
         
-        if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay) { // 选择单日的情况
+        if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay || self.HQL_SelectionStyle == calendarViewSelectionStyleMonth) { // 选择单日的情况
             shape = drawGeometricShapeCircular;     // 选择日
         } else if (self.HQL_SelectionStyle == calendarViewSelectionStyleCustom) { // 选择自定义区间
             if (dateModel.customStyle == calendarViewSelectionStyleCustomBeginDate) {

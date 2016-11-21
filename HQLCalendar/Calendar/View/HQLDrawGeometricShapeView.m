@@ -43,8 +43,9 @@
     self.currentLayer.fillColor = color.CGColor;
     UIBezierPath *path = nil;
     
-    CGFloat width = self.frame.size.width - 3;
-    CGFloat height = self.frame.size.height - 3;
+    CGFloat length = self.frame.size.width > self.frame.size.height ? self.frame.size.height : self.frame.size.width;
+    CGFloat width = length - 3;
+    CGFloat height = length - 3;
     CGFloat x = (self.frame.size.width - width) * 0.5;
     CGFloat y = (self.frame.size.height - height) * 0.5 + 1;
     

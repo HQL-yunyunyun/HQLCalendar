@@ -82,6 +82,12 @@
 // 高度不可控制
 - (instancetype)initWithFrame:(CGRect)frame dateModel:(HQLDateModel *)dateModel;
 
+
+/**
+ 创建一个selectionStyle为month的日历
+ */
+- (instancetype)initMonthStyleViewWithFrame:(CGRect)frame;
+
 // 选择某个日期
 - (void)selectDate:(HQLDateModel *)date;
 

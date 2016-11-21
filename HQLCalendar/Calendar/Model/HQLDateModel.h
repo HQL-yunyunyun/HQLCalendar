@@ -13,6 +13,7 @@
 typedef enum {
     calendarViewSelectionStyleDay = 0,  // 日期选中时的模式,选中单日
     calendarViewSelectionStyleWeek ,    // 日期选中时的模式,选中一周
+    calendarViewSelectionStyleMonth,    //  日期选中时的模式,选中一个月
     calendarViewSelectionStyleCustom  //  日期选中时的模式,自定义区间
 } HQLCalendarViewSelectionStyle;
 
