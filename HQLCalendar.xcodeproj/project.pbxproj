@@ -16,6 +16,15 @@
 		4AA082171DE2F24300CE9972 /* icon_next_button_orange.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AA082111DE2F24300CE9972 /* icon_next_button_orange.png */; };
 		4AA082181DE2F24300CE9972 /* icon_next_button_orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AA082121DE2F24300CE9972 /* icon_next_button_orange@2x.png */; };
 		4AA082191DE2F24300CE9972 /* icon_next_button_orange@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AA082131DE2F24300CE9972 /* icon_next_button_orange@3x.png */; };
+		4AA082391DE436EA00CE9972 /* HMBusinessReportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082331DE436EA00CE9972 /* HMBusinessReportController.m */; };
+		4AA0823A1DE436EA00CE9972 /* HMDateChooseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082361DE436EA00CE9972 /* HMDateChooseView.m */; };
+		4AA0823B1DE436EA00CE9972 /* HMDateOperationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082381DE436EA00CE9972 /* HMDateOperationView.m */; };
+		4AA0823E1DE436FF00CE9972 /* HMTitleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA0823D1DE436FF00CE9972 /* HMTitleButton.m */; };
+		4AA0824A1DE4370700CE9972 /* HMPopMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082411DE4370700CE9972 /* HMPopMenu.m */; };
+		4AA0824B1DE4370700CE9972 /* HMPopMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082431DE4370700CE9972 /* HMPopMenuCell.m */; };
+		4AA0824C1DE4370700CE9972 /* HMPopMenuDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082451DE4370700CE9972 /* HMPopMenuDataSource.m */; };
+		4AA0824D1DE4370700CE9972 /* HMPopMenuDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082471DE4370700CE9972 /* HMPopMenuDelegate.m */; };
+		4AA0824E1DE4370700CE9972 /* HMPopMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AA082491DE4370700CE9972 /* HMPopMenuView.m */; };
 		4AB03F991DD319BA00C0C7C9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03F981DD319BA00C0C7C9 /* main.m */; };
 		4AB03F9C1DD319BA00C0C7C9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB03F9B1DD319BA00C0C7C9 /* AppDelegate.m */; };
 		4AB03FA21DD319BA00C0C7C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AB03FA01DD319BA00C0C7C9 /* Main.storyboard */; };
@@ -40,6 +49,25 @@
 		4AA082111DE2F24300CE9972 /* icon_next_button_orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_next_button_orange.png; sourceTree = "<group>"; };
 		4AA082121DE2F24300CE9972 /* icon_next_button_orange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_next_button_orange@2x.png"; sourceTree = "<group>"; };
 		4AA082131DE2F24300CE9972 /* icon_next_button_orange@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_next_button_orange@3x.png"; sourceTree = "<group>"; };
+		4AA082321DE436EA00CE9972 /* HMBusinessReportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMBusinessReportController.h; sourceTree = "<group>"; };
+		4AA082331DE436EA00CE9972 /* HMBusinessReportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMBusinessReportController.m; sourceTree = "<group>"; };
+		4AA082351DE436EA00CE9972 /* HMDateChooseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMDateChooseView.h; sourceTree = "<group>"; };
+		4AA082361DE436EA00CE9972 /* HMDateChooseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMDateChooseView.m; sourceTree = "<group>"; };
+		4AA082371DE436EA00CE9972 /* HMDateOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMDateOperationView.h; sourceTree = "<group>"; };
+		4AA082381DE436EA00CE9972 /* HMDateOperationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMDateOperationView.m; sourceTree = "<group>"; };
+		4AA0823C1DE436FF00CE9972 /* HMTitleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMTitleButton.h; sourceTree = "<group>"; };
+		4AA0823D1DE436FF00CE9972 /* HMTitleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMTitleButton.m; sourceTree = "<group>"; };
+		4AA082401DE4370700CE9972 /* HMPopMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMPopMenu.h; sourceTree = "<group>"; };
+		4AA082411DE4370700CE9972 /* HMPopMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMPopMenu.m; sourceTree = "<group>"; };
+		4AA082421DE4370700CE9972 /* HMPopMenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMPopMenuCell.h; sourceTree = "<group>"; };
+		4AA082431DE4370700CE9972 /* HMPopMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMPopMenuCell.m; sourceTree = "<group>"; };
+		4AA082441DE4370700CE9972 /* HMPopMenuDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMPopMenuDataSource.h; sourceTree = "<group>"; };
+		4AA082451DE4370700CE9972 /* HMPopMenuDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMPopMenuDataSource.m; sourceTree = "<group>"; };
+		4AA082461DE4370700CE9972 /* HMPopMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMPopMenuDelegate.h; sourceTree = "<group>"; };
+		4AA082471DE4370700CE9972 /* HMPopMenuDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMPopMenuDelegate.m; sourceTree = "<group>"; };
+		4AA082481DE4370700CE9972 /* HMPopMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMPopMenuView.h; sourceTree = "<group>"; };
+		4AA082491DE4370700CE9972 /* HMPopMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMPopMenuView.m; sourceTree = "<group>"; };
+		4AA0824F1DE4388300CE9972 /* HQLCalendar-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "HQLCalendar-Prefix.pch"; sourceTree = "<group>"; };
 		4AB03F941DD319BA00C0C7C9 /* HQLCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AB03F981DD319BA00C0C7C9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4AB03F9A1DD319BA00C0C7C9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -99,6 +127,55 @@
 			path = icon;
 			sourceTree = "<group>";
 		};
+		4AA082301DE436EA00CE9972 /* HMBusinesReport */ = {
+			isa = PBXGroup;
+			children = (
+				4AA082311DE436EA00CE9972 /* Controller */,
+				4AA082341DE436EA00CE9972 /* View */,
+			);
+			path = HMBusinesReport;
+			sourceTree = "<group>";
+		};
+		4AA082311DE436EA00CE9972 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				4AA082321DE436EA00CE9972 /* HMBusinessReportController.h */,
+				4AA082331DE436EA00CE9972 /* HMBusinessReportController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		4AA082341DE436EA00CE9972 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4AA0823F1DE4370700CE9972 /* PopMenu */,
+				4AA0823C1DE436FF00CE9972 /* HMTitleButton.h */,
+				4AA0823D1DE436FF00CE9972 /* HMTitleButton.m */,
+				4AA082351DE436EA00CE9972 /* HMDateChooseView.h */,
+				4AA082361DE436EA00CE9972 /* HMDateChooseView.m */,
+				4AA082371DE436EA00CE9972 /* HMDateOperationView.h */,
+				4AA082381DE436EA00CE9972 /* HMDateOperationView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4AA0823F1DE4370700CE9972 /* PopMenu */ = {
+			isa = PBXGroup;
+			children = (
+				4AA082401DE4370700CE9972 /* HMPopMenu.h */,
+				4AA082411DE4370700CE9972 /* HMPopMenu.m */,
+				4AA082421DE4370700CE9972 /* HMPopMenuCell.h */,
+				4AA082431DE4370700CE9972 /* HMPopMenuCell.m */,
+				4AA082441DE4370700CE9972 /* HMPopMenuDataSource.h */,
+				4AA082451DE4370700CE9972 /* HMPopMenuDataSource.m */,
+				4AA082461DE4370700CE9972 /* HMPopMenuDelegate.h */,
+				4AA082471DE4370700CE9972 /* HMPopMenuDelegate.m */,
+				4AA082481DE4370700CE9972 /* HMPopMenuView.h */,
+				4AA082491DE4370700CE9972 /* HMPopMenuView.m */,
+			);
+			path = PopMenu;
+			sourceTree = "<group>";
+		};
 		4AB03F8B1DD319BA00C0C7C9 = {
 			isa = PBXGroup;
 			children = (
@@ -146,6 +223,7 @@
 				4AB03FA81DD319BA00C0C7C9 /* Info.plist */,
 				4AB03FB81DD31A5F00C0C7C9 /* ViewController.h */,
 				4AB03FB91DD31A5F00C0C7C9 /* ViewController.m */,
+				4AA0824F1DE4388300CE9972 /* HQLCalendar-Prefix.pch */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -165,6 +243,7 @@
 		4AB03FB41DD31A3700C0C7C9 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				4AA082301DE436EA00CE9972 /* HMBusinesReport */,
 				4AB03FBB1DD320E100C0C7C9 /* testController.h */,
 				4AB03FBC1DD320E100C0C7C9 /* testController.m */,
 			);
@@ -344,13 +423,22 @@
 				4AB03FBA1DD31A5F00C0C7C9 /* ViewController.m in Sources */,
 				4AB03FC01DD40EBE00C0C7C9 /* HQLCalendarView.m in Sources */,
 				4AB03F9C1DD319BA00C0C7C9 /* AppDelegate.m in Sources */,
+				4AA0824B1DE4370700CE9972 /* HMPopMenuCell.m in Sources */,
+				4AA082391DE436EA00CE9972 /* HMBusinessReportController.m in Sources */,
 				4AB03F991DD319BA00C0C7C9 /* main.m in Sources */,
+				4AA0824E1DE4370700CE9972 /* HMPopMenuView.m in Sources */,
 				4AB03FC91DD5958D00C0C7C9 /* HQLDrawGeometricShapeView.m in Sources */,
 				4A1A4B531DDEFF00006F05EB /* HQLDateModel.m in Sources */,
+				4AA0824C1DE4370700CE9972 /* HMPopMenuDataSource.m in Sources */,
 				4AB03FBD1DD320E100C0C7C9 /* testController.m in Sources */,
+				4AA0824A1DE4370700CE9972 /* HMPopMenu.m in Sources */,
 				4AB03FC31DD45B5E00C0C7C9 /* HQLCalendarCell.m in Sources */,
 				4AB03FC61DD4894300C0C7C9 /* UIView+ST.m in Sources */,
+				4AA0823A1DE436EA00CE9972 /* HMDateChooseView.m in Sources */,
+				4AA0824D1DE4370700CE9972 /* HMPopMenuDelegate.m in Sources */,
+				4AA0823E1DE436FF00CE9972 /* HMTitleButton.m in Sources */,
 				4A2FFA621DDAF703007EBC33 /* HQLCalendar.m in Sources */,
+				4AA0823B1DE436EA00CE9972 /* HMDateOperationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +494,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "HQLCalendar/HQLCalendar-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -452,6 +541,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "HQLCalendar/HQLCalendar-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

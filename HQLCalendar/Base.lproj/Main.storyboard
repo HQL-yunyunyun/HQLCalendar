@@ -48,18 +48,26 @@
                                     <action selector="buttonDidClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UsX-pu-8cE"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7H-fG-ONr">
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="pushToReportController:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Edm-Yo-LMz"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="K8T-P3-9AV" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="68T-N5-1g2"/>
                             <constraint firstItem="Ryk-Qb-N6Y" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="DAr-p9-0bv"/>
                             <constraint firstItem="Ryk-Qb-N6Y" firstAttribute="leading" secondItem="FLz-Mw-Gvc" secondAttribute="trailing" constant="5" id="EGZ-9S-Ntx"/>
+                            <constraint firstItem="F7H-fG-ONr" firstAttribute="top" secondItem="Ryk-Qb-N6Y" secondAttribute="bottom" constant="5" id="Pcz-4z-uL9"/>
                             <constraint firstItem="FLz-Mw-Gvc" firstAttribute="leading" secondItem="MhF-Bp-QXL" secondAttribute="trailing" constant="5" id="U2L-lx-8yX"/>
                             <constraint firstItem="MhF-Bp-QXL" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="VAz-Lt-xDy"/>
                             <constraint firstItem="fdO-kZ-PGO" firstAttribute="leading" secondItem="Ryk-Qb-N6Y" secondAttribute="trailing" constant="5" id="jHF-py-uoJ"/>
                             <constraint firstItem="Ryk-Qb-N6Y" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jgO-7m-1tl"/>
                             <constraint firstItem="fdO-kZ-PGO" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="mw6-9Q-ZhI"/>
                             <constraint firstItem="FLz-Mw-Gvc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="wNV-nU-Z1O"/>
+                            <constraint firstItem="F7H-fG-ONr" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="xzJ-9U-lPA"/>
                             <constraint firstItem="K8T-P3-9AV" firstAttribute="leading" secondItem="fdO-kZ-PGO" secondAttribute="trailing" constant="5" id="yzh-If-WxN"/>
                         </constraints>
                     </view>

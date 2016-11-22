@@ -48,11 +48,6 @@
         self.descLabel.x = 0;
         self.descLabel.y = (self.height * 0.8 - self.descLabel.height * 0.5) - 2;
     }
-    
-    
-    [self sendSubviewToBack:self.selectedView];
-    self.selectedView.width = self.width;
-    self.selectedView.height = self.height;
 }
 
 #pragma mark - event 
@@ -100,26 +95,37 @@
         
         [self.contentView.layer setBorderColor:HQLColor(220, 218, 220).CGColor];
         [self.contentView.layer setBorderWidth:0.5];
+    } else {
+        [self.dateLabel setFont:[UIFont systemFontOfSize:15]];
+        [self.descLabel setFont:[UIFont systemFontOfSize:13]];
+        
+        [self.contentView.layer setBorderWidth:0];
     }
 }
 
 - (void)setDateModel:(HQLDateModel *)dateModel {
     _dateModel = dateModel;
-    [self.dateLabel setText:@""];
+    
+    // 重设selectedView的宽高
+    [self sendSubviewToBack:self.selectedView];
+    self.selectedView.width = self.width;
+    self.selectedView.height = self.height;
+    
     if (dateModel.isZero == YES) {
+        [self.dateLabel setText:@""];
         self.selectedView.shape = drawGeometricShapeNone;
         [self setShowDescString:NO];
+        [self setNeedsLayout];
         return;
     }
-    
     [self.dateLabel setText:[self getCellSting]];
-//    [self.descLabel setText:@"测试"];
     
     if (!dateModel.isAllowSelectedFutureDate) {
         // 不能选择未来的日期
         [self.dateLabel setTextColor:HQLColor(170, 170, 170)];
         self.selectedView.shape = drawGeometricShapeNone;
         [self setShowDescString:NO];
+        [self setNeedsLayout];
         return;
     }
     
@@ -171,6 +177,7 @@
     }
     [self.selectedView setColor:selectedColor];
     [self.selectedView setShape:shape];
+    [self setNeedsLayout];
 }
 
 #pragma mark - getter

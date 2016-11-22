@@ -59,9 +59,13 @@
     self.titleView.width = self.width;
     self.line.width = self.width;
     
+    self.lastButton.width = 30;
+    [self.lastButton setBackgroundColor:[UIColor redColor]];
     self.lastButton.y = (self.titleView.height - self.lastButton.height) * 0.5;
     self.lastButton.x = margin;
     
+    self.nextButton.width = 30;
+    [self.nextButton setBackgroundColor:[UIColor redColor]];
     self.nextButton.y = (self.titleView.height - self.nextButton.height) * 0.5;
     self.nextButton.x = self.titleView.width - self.nextButton.width - margin;
     
@@ -88,7 +92,7 @@
 
 - (void)selectDateModel:(HQLDateModel *)dateModel isTriggerDelegate:(BOOL)yesOrNo {
     // 先设置当前时间的日期
-    [self setDateModel:dateModel];
+    [self setDateModel:[[HQLDateModel alloc] initWithHQLDate:dateModel]];
     // 中间的View选择日期
     HQLCalendarView *midView = self.viewArray[1];
     [midView selectDate:dateModel isTriggerDelegate:yesOrNo];
@@ -203,6 +207,10 @@
         [formatter setDateFormat:@"yyyy年MM月"];
     }
     return [formatter stringFromDate:[self.currentDate changeToNSDate]];
+}
+
+- (void)reloadDate {
+    [self calculateCalendarViewFrame];
 }
 
 #pragma mark - calendar view delegate
@@ -358,6 +366,7 @@
 - (void)setSelectionStyle:(HQLCalendarViewSelectionStyle)selectionStyle {
     _selectionStyle = selectionStyle;
     if (self.viewArray.count == 0 || !self.viewArray) return;
+    [self.dateRecord removeAllObjects];
     for (HQLCalendarView *view in self.viewArray) {
         [view setSelectionStyle:selectionStyle];
         [view reloadData];

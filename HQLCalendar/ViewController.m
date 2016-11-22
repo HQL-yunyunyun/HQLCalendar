@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "testController.h"
+#import "HMBusinessReportController.h"
 
 @interface ViewController ()
 
@@ -29,6 +30,12 @@
     testController *test = [testController new];
     test.mode = sender.tag;
     [self.navigationController pushViewController:test animated:YES];
+    
+}
+
+- (IBAction)pushToReportController:(UIButton *)sender {
+    HMBusinessReportController *vc = [HMBusinessReportController new];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 

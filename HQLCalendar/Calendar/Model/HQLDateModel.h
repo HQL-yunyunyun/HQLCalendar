@@ -86,6 +86,9 @@ typedef enum {
 // 比较日期大小， 若self大于date 则为1 ，相等为0 ，小于为-1
 - (int)compareWithHQLDate:(HQLDateModel *)date;
 
+// 返回当前日期在该月中是第几周
+- (NSInteger)weekOfMonth;
+
 + (NSInteger)rowOfCalenderInMonth:(NSInteger)month year:(NSInteger)year;
 
 + (NSUInteger)numberOfDaysInMonth:(NSInteger)month year:(NSInteger)year;

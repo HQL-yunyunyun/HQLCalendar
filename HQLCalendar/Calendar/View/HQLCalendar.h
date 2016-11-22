@@ -44,4 +44,6 @@
  */
 - (void)selectDateModel:(HQLDateModel *)dateModel isTriggerDelegate:(BOOL)yesOrNo;
 
+- (void)reloadDate;
+
 @end

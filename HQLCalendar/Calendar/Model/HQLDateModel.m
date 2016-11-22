@@ -156,6 +156,11 @@
     return [first compareWithHQLDate:second];
 }
 
+- (NSInteger)weekOfMonth {
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    return [calendar component:NSCalendarUnitWeekOfMonth fromDate:[self changeToNSDate]];
+}
+
 #pragma mark - class method
 
 + (NSInteger)rowOfCalenderInMonth:(NSInteger)month year:(NSInteger)year {

@@ -165,14 +165,14 @@
 
 - (void)calcuateViewFrame {
     // 计算headerView的frame
-    self.headerView.height = self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : kItemHeight;
+    self.headerView.height = self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : (kItemWidth * 0.8);
     self.headerView.width = self.width;
-    self.headerViewBottomLine.y = kItemHeight;
+    self.headerViewBottomLine.y = (kItemWidth * 0.8);
     self.headerViewBottomLine.width = self.width;
     // 计算label的frame
     UILabel *lastLabel = nil;
     for (UILabel *label in self.headerLabelArray) {
-        label.height = kItemHeight * 0.8;
+        label.height = kItemWidth * 0.8;
         label.width = kItemWidth;
         label.y = 0;
         label.x = CGRectGetMaxX(lastLabel.frame);
@@ -413,12 +413,17 @@
 - (void)setSelectionStyle:(HQLCalendarViewSelectionStyle)selectionStyle {
     _selectionStyle = selectionStyle;
     
+    self.dayRecord = nil;
+    [self.weekRecord removeAllObjects];
+    self.monthRecord = nil;
+    
     if (selectionStyle == calendarViewSelectionStyleMonth) {
         // 重新设置当前dataSource
         [self.headerView setHidden:YES];
-        HQLDateModel *today = self.dateModel == nil ? [HQLDateModel HQLDate] : self.dateModel;
-        [self setDateModel:today];
+    } else {
+        [self.headerView setHidden:NO];
     }
+    [self setDateModel:[HQLDateModel HQLDate]];
 }
 
 #pragma mark - getter
@@ -430,7 +435,7 @@
 - (UIView *)headerView {
     if (!_headerView) {
         // 创建
-        _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.width, kItemHeight)];
+        _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.width, (kItemWidth * 0.8))];
         [self addSubview:_headerView];
         // label
         for (NSString *title in [self weekdayArray]) {
@@ -448,7 +453,7 @@
             [self.headerLabelArray addObject:label];
         }
         // lineView
-        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, kItemHeight, self.width, 0.5)];
+        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, _headerView.height - 0.5, self.width, 0.5)];
         [lineView setBackgroundColor:HQLColor(220, 218, 220)];
         [_headerView addSubview:lineView];
         self.headerViewBottomLine = lineView;
