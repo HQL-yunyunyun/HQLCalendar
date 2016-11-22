@@ -202,7 +202,7 @@
 - (void)selectedFirstOrLastWeek:(BOOL)yesOrNo isSelectFirstWeek:(BOOL)isSelectFirst {
     if (self.dataSource.count !=0 && yesOrNo && self.selectionStyle == calendarViewSelectionStyleWeek) {
         NSInteger day = isSelectFirst ? 1 : [self.dateModel numberOfDaysInCurrentMonth];
-        [self selectDate:[[HQLDateModel alloc] initWithYear:self.dateModel.year month:self.dateModel.month day:day]];
+        [self selectDate:[[HQLDateModel alloc] initWithYear:self.dateModel.year month:self.dateModel.month day:day] isTriggerDelegate:NO];
     }
 }
 
@@ -237,8 +237,16 @@
     }
 }
 
-- (void)selectDate:(HQLDateModel *)date {
-    [self selectOrDeselectDate:date isSelect:YES];
+- (void)selectDate:(HQLDateModel *)date isTriggerDelegate:(BOOL)yesOrNo {
+    if (yesOrNo) {
+        NSIndexPath *indexPath = [self getIndexOfDate:date];
+        if (self.selectionStyle == calendarViewSelectionStyleMonth) {
+            indexPath = [NSIndexPath indexPathForItem:date.month - 1 inSection:0];
+        }
+        [self collectionView:self.collectionView didSelectItemAtIndexPath:indexPath];
+    } else {
+        [self selectOrDeselectDate:date isSelect:YES];
+    }
 }
 
 - (void)deselectDate:(HQLDateModel *)date {
@@ -297,7 +305,7 @@
         
         if (isDeselect) {
             [self deselectDate:deselectDate];
-            [self selectDate:model];
+            [self selectDate:model isTriggerDelegate:NO];
         }
         HQLDateModel *begin = [self setupWeekBeginDateAndEndDateWithRegion:front isFront:YES currentDate:model];
         HQLDateModel *end = [self setupWeekBeginDateAndEndDateWithRegion:back isFront:NO currentDate:model];

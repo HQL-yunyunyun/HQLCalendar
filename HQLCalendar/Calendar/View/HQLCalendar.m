@@ -54,16 +54,14 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGFloat margin = 10;
+    CGFloat margin = 16;
     
     self.titleView.width = self.width;
     self.line.width = self.width;
     
-    self.lastButton.width = 50;
     self.lastButton.y = (self.titleView.height - self.lastButton.height) * 0.5;
     self.lastButton.x = margin;
     
-    self.nextButton.width = 50;
     self.nextButton.y = (self.titleView.height - self.nextButton.height) * 0.5;
     self.nextButton.x = self.titleView.width - self.nextButton.width - margin;
     
@@ -83,6 +81,18 @@
 }
 
 #pragma mark - event 
+
+- (void)setDateModel:(HQLDateModel *)dateModel {
+    self.currentDate = dateModel;
+}
+
+- (void)selectDateModel:(HQLDateModel *)dateModel isTriggerDelegate:(BOOL)yesOrNo {
+    // 先设置当前时间的日期
+    [self setDateModel:dateModel];
+    // 中间的View选择日期
+    HQLCalendarView *midView = self.viewArray[1];
+    [midView selectDate:dateModel isTriggerDelegate:yesOrNo];
+}
 
 - (void)lastOrNextMonth:(UIButton *)button {
     if (self.isAnimate || (button.tag != kLastButtonTag && button.tag != kNextButtonTag)) {
@@ -168,7 +178,7 @@
         if (self.selectionStyle == calendarViewSelectionStyleMonth) {
             if (view.dateModel.year == date.year) {
                 if (selected) {
-                    [view selectDate:date];
+                    [view selectDate:date isTriggerDelegate:NO];
                 } else {
                     [view deselectDate:date];
                 }
@@ -176,7 +186,7 @@
         } else {
             if (view.dateModel.year == date.year && view.dateModel.month == date.month) {
                 if (selected) {
-                    [view selectDate:date];
+                    [view selectDate:date isTriggerDelegate:NO];
                 } else {
                     [view deselectDate:date];
                 }
@@ -235,7 +245,7 @@
 - (UIButton *)lastButton {
     if (!_lastButton) {
         _lastButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//        [_lastButton setTitle:@"last" forState:UIControlStateNormal];
+        //        [_lastButton setTitle:@"last" forState:UIControlStateNormal];
         _lastButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [_lastButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon_last_button_orange" ofType:@"png"]] forState:UIControlStateNormal];
         [_lastButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
@@ -249,7 +259,7 @@
 - (UIButton *)nextButton {
     if (!_nextButton) {
         _nextButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//        [_nextButton setTitle:@"next" forState:UIControlStateNormal];
+        //        [_nextButton setTitle:@"next" forState:UIControlStateNormal];
         _nextButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
         [_nextButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon_next_button_orange" ofType:@"png"]] forState:UIControlStateNormal];
         [_nextButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];

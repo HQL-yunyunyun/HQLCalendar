@@ -89,7 +89,7 @@
 - (instancetype)initMonthStyleViewWithFrame:(CGRect)frame;
 
 // 选择某个日期
-- (void)selectDate:(HQLDateModel *)date;
+- (void)selectDate:(HQLDateModel *)date isTriggerDelegate:(BOOL)yesOrNo;
 
 // 取消选择某个日期
 - (void)deselectDate:(HQLDateModel *)date;

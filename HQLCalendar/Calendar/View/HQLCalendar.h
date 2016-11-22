@@ -34,4 +34,14 @@
 // 原始dateModel 高度不可控制
 - (instancetype)initWithFrame:(CGRect)frame dateModel:(HQLDateModel *)dateModel;
 
+/**
+ 设置当前时间
+ */
+- (void)setDateModel:(HQLDateModel *)dateModel;
+
+/**
+ 选择某一个时间
+ */
+- (void)selectDateModel:(HQLDateModel *)dateModel isTriggerDelegate:(BOOL)yesOrNo;
+
 @end
