@@ -16,7 +16,7 @@
 @optional;
 - (void)dateChooseView:(HMDateChooseView *)chooseView didSelectBeginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end titleString:(NSString *)titleString;
 
-- (void)dateChooseView:(HMDateChooseView *)chooseView didChangeSelectionStyle:(HQLCalendarViewSelectionStyle)style titleString:(NSString *)titleString;
+- (void)dateChooseView:(HMDateChooseView *)chooseView didChangeSelectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end titleString:(NSString *)titleString;
 
 - (void)dateChooseViewDidShow:(HMDateChooseView *)chooseView;
 

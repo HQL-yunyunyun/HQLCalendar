@@ -34,14 +34,17 @@
 
 @property (strong, nonatomic) UIView *contentView;
 
+@property (assign, nonatomic) CGFloat viewY;
+
 @end
 
 @implementation HMDateChooseView
 
 - (instancetype)initWithFrame:(CGRect)frame dateModel:(HQLDateModel *)dateModel {
-    if (self = [super initWithFrame:[UIScreen mainScreen].bounds]) {
+    if (self = [super initWithFrame:frame]) {
         [self prepareUI];
         self.dateModel = dateModel;
+        self.viewY = frame.origin.y;
     }
     return self;
 }
@@ -49,11 +52,27 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-//    self.calendar 
-    self.calendar.y = CGRectGetMaxY(self.segmentedControl.frame) + kTopPadding;
+    self.width = ZXScreenW;
+    self.height = ZXScreenH - self.viewY;
+    self.x = 0;
+    
+    self.maskView.width = self.width;
+    self.maskView.height = self.height;
+    
+    self.segmentedControl.width = self.width - 2 * kPadding;
+    self.segmentedControl.x = kPadding;
+    self.segmentedControl.y = kTopPadding;
+    
+    self.calendar.y = CGRectGetMaxY(self.segmentedControl.frame);
     self.calendar.x = 0;
+    self.calendar.width = self.width;
     [self.calendar reloadDate];
     self.contentView.height = CGRectGetMaxY(self.calendar.frame);
+}
+
+- (void)dealloc {
+    ZXLog(@"dealloc ---> %@", NSStringFromClass([self class]));
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - prepare UI
@@ -62,9 +81,17 @@
     [self setBackgroundColor:[UIColor clearColor]];
     [self addSubview:self.maskView];
     [self addSubview:self.contentView];
+    
+    // 注册通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(calendarFrameChange) name:@"HQLCalendarFrameChange" object:nil];
 }
 
 #pragma mark - event
+
+- (void)calendarFrameChange {
+//    [self setNeedsLayout]; // 重新计算frame值
+    self.contentView.height = CGRectGetMaxY(self.calendar.frame);
+}
 
 // item
 - (NSArray *)segmentItems {
@@ -98,19 +125,22 @@
     self.currentStyle = (int)control.selectedSegmentIndex;
     [self.calendar setSelectionStyle:self.currentStyle];
     HQLDateModel *selectDate = nil;
+    HQLDateModel *endDate = nil;
     if (control.selectedSegmentIndex == 0) {  // index : 0 为 日
         selectDate = self.dayRecord;
+        endDate = [self setupWeekBeginDateAndEndDateWithRegion:0 isFront:NO currentDate:selectDate];
     } else if (control.selectedSegmentIndex == 1) { // 1 为 周
         selectDate = self.weekRecord;
+        endDate = [self setupWeekBeginDateAndEndDateWithRegion:6 isFront:NO currentDate:selectDate];
     } else if (control.selectedSegmentIndex == 2) { // 2 为月
         selectDate = self.monthRecord;
+        endDate = [self setupWeekBeginDateAndEndDateWithRegion:[selectDate numberOfDaysInCurrentMonth] - 1 isFront:NO currentDate:selectDate];
     }
     [self.calendar selectDateModel:selectDate isTriggerDelegate:NO];
     [self.calendar reloadDate];
-    [self setNeedsLayout];
     // delegate
-    if ([self.delegate respondsToSelector:@selector(dateChooseView:didChangeSelectionStyle:titleString:)]) {
-        [self.delegate dateChooseView:self didChangeSelectionStyle:self.currentStyle titleString:[self getTitleString]];
+    if ([self.delegate respondsToSelector:@selector(dateChooseView:didChangeSelectionStyle:beginDate:endDate:titleString:)]) {
+        [self.delegate dateChooseView:self didChangeSelectionStyle:self.currentStyle beginDate:selectDate endDate:endDate titleString:[self getTitleString]];
     }
 }
 
@@ -123,22 +153,30 @@
     if (yesOrNo) {
         if ((currentDate.day - region - 1) < 0) {
             month = currentDate.month - 1;
+            if (month < 1) {
+                year -= 1;
+                month = 12;
+            }
             day = [HQLDateModel numberOfDaysInMonth:month year:year] - labs((currentDate.day - region));
         }
     } else {
         if ((currentDate.day + region) > [currentDate numberOfDaysInCurrentMonth]) {
             month = currentDate.month +1;
+            if (month > 12) {
+                year += 1;
+                month = 1;
+            }
             day = labs(((currentDate.day + region) - [currentDate numberOfDaysInCurrentMonth]));
         }
     }
     
-    if (month < 1) {
-        year -= 1;
-        month = 12;
-    } else if (month > 12) {
-        year += 1;
-        month = 1;
-    }
+//    if (month < 1) {
+//        year -= 1;
+//        month = 12;
+//    } else if (month > 12) {
+//        year += 1;
+//        month = 1;
+//    }
     
     HQLDateModel *date = [[HQLDateModel alloc] initWithYear:year month:month day:day];
     if (!yesOrNo) {
@@ -175,9 +213,9 @@
 - (void)showInParentsView:(UIView *)view {
     ZXWeakSelf;
     [view addSubview:self];
-    self.contentView.y -= -self.contentView.height;
+    self.contentView.y = -self.contentView.height - self.viewY;
     [UIView animateWithDuration:0.3 animations:^{
-        weakSelf.contentView.y = 50;
+        weakSelf.contentView.y = 0;
         weakSelf.maskView.alpha = 1.0;
     } completion:^(BOOL finished) {
         if ([weakSelf.delegate respondsToSelector:@selector(dateChooseViewDidShow:)]) {
@@ -190,7 +228,7 @@
 - (void)hideView {
     ZXWeakSelf;
     [UIView animateWithDuration:0.3 animations:^{
-        weakSelf.contentView.y -= -weakSelf.contentView.height;
+        weakSelf.contentView.y = -weakSelf.contentView.height - weakSelf.viewY;
         weakSelf.maskView.alpha = 0.0;
     } completion:^(BOOL finished) {
         if ([weakSelf.delegate respondsToSelector:@selector(dateChooseViewDidHide:)]) {
@@ -262,7 +300,7 @@
 
 - (HQLCalendar *)calendar {
     if (!_calendar) {
-        _calendar = [[HQLCalendar alloc] initWithFrame:self.bounds dateModel:self.dateModel];
+        _calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 0, ZXScreenW, ZXScreenH) dateModel:self.dateModel];
         _calendar.selectionStyle = calendarViewSelectionStyleDay;
         _calendar.allowSelectedFutureDate = NO;
         _calendar.delegate = self;
@@ -273,7 +311,7 @@
 - (UISegmentedControl *)segmentedControl {
     if (!_segmentedControl) {
         _segmentedControl = [[UISegmentedControl alloc] initWithItems:[self segmentItems]];
-        _segmentedControl.frame = CGRectMake(kPadding, kTopPadding, self.width - 2 * kPadding, kSegmentedConrtolHeight - 2 * kTopPadding);
+        _segmentedControl.frame = CGRectMake(kPadding, kTopPadding, ZXScreenW - 2 * kPadding, kSegmentedConrtolHeight - 2 * kTopPadding);
         _segmentedControl.tintColor = [UIColor orangeColor];
         [_segmentedControl addTarget:self action:@selector(segmentedControlDidclick:) forControlEvents:UIControlEventValueChanged];
         _segmentedControl.selectedSegmentIndex = 0;
@@ -284,8 +322,8 @@
 
 - (UIView *)contentView {
     if (!_contentView) {
-        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-        _contentView.y = 50;
+        _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ZXScreenW, ZXScreenH)];
+        _contentView.y = 0;
         [_contentView setBackgroundColor:[UIColor whiteColor]];
         [_contentView addSubview:self.segmentedControl];
         [_contentView addSubview:self.calendar];
@@ -295,7 +333,7 @@
 
 - (UIView *)maskView {
     if (!_maskView) {
-        _maskView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        _maskView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ZXScreenW, ZXScreenH)];
         [_maskView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
         [_maskView setAlpha:0.0];
     }

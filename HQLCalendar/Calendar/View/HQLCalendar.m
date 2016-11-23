@@ -158,6 +158,9 @@
         view.y = CGRectGetMaxY(self.titleView.frame);
     }
     self.height = CGRectGetMaxY(self.viewArray[1].frame);
+    
+//    NSNotification *notice = [NSNotification notificationWithName:@"HQLCalendarFrameChange" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"HQLCalendarFrameChange" object:nil];
 }
 
 // 选择当前日期

@@ -129,21 +129,21 @@
     if (yesOrNo) {
         if ((currentDate.day - region - 1) < 0) {
             month = currentDate.month - 1;
+            if (month < 1) {
+                year -= 1;
+                month = 12;
+            }
             day = [HQLDateModel numberOfDaysInMonth:month year:year] - labs((currentDate.day - region));
         }
     } else {
         if ((currentDate.day + region) > [currentDate numberOfDaysInCurrentMonth]) {
             month = currentDate.month +1;
+            if (month > 12) {
+                year += 1;
+                month = 1;
+            }
             day = labs(((currentDate.day + region) - [currentDate numberOfDaysInCurrentMonth]));
         }
-    }
-    
-    if (month < 1) {
-        year -= 1;
-        month = 12;
-    } else if (month > 12) {
-        year += 1;
-        month = 1;
     }
     
     HQLDateModel *date = [[HQLDateModel alloc] initWithYear:year month:month day:day];
@@ -267,6 +267,9 @@
         NSInteger back = 0; // 后区间
         
         if (self.selectionStyle == calendarViewSelectionStyleDay) {
+//            if (self.dayRecord.month != model.month) {
+//                // 只能对本月的
+//            }
             if (self.dayRecord != model) {
                 deselectDate = self.dayRecord;
                 isDeselect = YES;
@@ -354,6 +357,10 @@
     if (dateModel == nil) return;
     _dateModel = dateModel;
     [self.dataSource removeAllObjects];
+    // 重设dataSource之后，记录都得重置
+    self.dayRecord = nil;
+    [self.weekRecord removeAllObjects];
+    self.monthRecord = nil;
     // 设置dataSource
     if (self.selectionStyle != calendarViewSelectionStyleMonth) {
         NSInteger firstWeekday = [HQLDateModel weekdayOfYear:dateModel.year month:dateModel.month day:1];
@@ -412,10 +419,6 @@
 
 - (void)setSelectionStyle:(HQLCalendarViewSelectionStyle)selectionStyle {
     _selectionStyle = selectionStyle;
-    
-    self.dayRecord = nil;
-    [self.weekRecord removeAllObjects];
-    self.monthRecord = nil;
     
     if (selectionStyle == calendarViewSelectionStyleMonth) {
         // 重新设置当前dataSource

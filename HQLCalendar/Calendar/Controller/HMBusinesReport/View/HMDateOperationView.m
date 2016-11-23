@@ -13,6 +13,8 @@
 
 #define kLastButtonTag 1991
 #define kNextButtonTag 9119
+#define kViewHeight 50
+#define kNavigationHeight 64
 
 @interface HMDateOperationView () <HMDateChooseViewDelegate>
 
@@ -46,7 +48,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    self.height = 50;
+    self.height = kViewHeight;
     self.width = ZXScreenW;
     CGFloat margin = 16;
     
@@ -70,6 +72,12 @@
     [self addSubview:self.dateButton];
     [self addSubview:self.lastButton];
     [self addSubview:self.nextButton];
+    
+    [self setBackgroundColor:[UIColor whiteColor]];
+    
+    UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, kViewHeight - 0.5, ZXScreenW, 0.5)];
+    [line setBackgroundColor:ZXColor(220, 218, 220)];
+    [self addSubview:line];
 }
 
 #pragma mark - event
@@ -89,7 +97,8 @@
 - (void)dateButtonDidClick:(UIButton *)button {
     button.selected = !button.isSelected;
     if (button.isSelected) {
-        [self.chooseView showInParentsView:[UIApplication sharedApplication].keyWindow];
+        [self.chooseView showInParentsView:self.superview];
+        [self.superview bringSubviewToFront:self];
     } else {
         [self.chooseView hideView];
     }
@@ -101,20 +110,20 @@
 
 #pragma mark - date choose view delegate
 
-- (void)dateChooseView:(HMDateChooseView *)chooseView didChangeSelectionStyle:(HQLCalendarViewSelectionStyle)style titleString:(NSString *)titleString {
+- (void)dateChooseView:(HMDateChooseView *)chooseView didChangeSelectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end titleString:(NSString *)titleString {
     [self.dateButton setTitle:titleString forState:UIControlStateNormal];
     self.currentStyle = style;
-    [self setNeedsLayout];
-}
-
-- (void)dateChooseView:(HMDateChooseView *)chooseView didSelectBeginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end titleString:(NSString *)titleString {
-    [self.dateButton setTitle:titleString forState:UIControlStateNormal];
     [self setNeedsLayout];
     if ([end isEqualHQLDateWithOutTime:[HQLDateModel HQLDate]]) {
         [self.nextButton setEnabled:NO];
     } else {
         [self.nextButton setEnabled:YES];
     }
+}
+
+- (void)dateChooseView:(HMDateChooseView *)chooseView didSelectBeginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end titleString:(NSString *)titleString {
+    // 一般设置
+    [self dateChooseView:chooseView didChangeSelectionStyle:self.currentStyle beginDate:begin endDate:end titleString:titleString];
 }
 
 #pragma mark - setter
@@ -142,7 +151,7 @@
 
 - (HMDateChooseView *)chooseView {
     if (!_chooseView) {
-        _chooseView = [[HMDateChooseView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) dateModel:[HQLDateModel HQLDate]];
+        _chooseView = [[HMDateChooseView alloc] initWithFrame:CGRectMake(0, kViewHeight + kNavigationHeight, 100, 100) dateModel:[HQLDateModel HQLDate]];
         _chooseView.delegate = self;
     }
     return _chooseView;
