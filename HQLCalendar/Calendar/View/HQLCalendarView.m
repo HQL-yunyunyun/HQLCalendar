@@ -394,7 +394,12 @@
     if (self.dataSource.count != 0) {
         HQLDateModel *today = [[HQLDateModel alloc] initCurrentDate];
         for (HQLDateModel *date in self.dataSource) {
-            date.allowSelectedFutureDate = allowSelectedFutureDate ? YES : [today compareWithHQLDateWithOutTime:date] > -1;
+            if (self.selectionStyle != calendarViewSelectionStyleMonth) {
+                date.allowSelectedFutureDate = allowSelectedFutureDate ? YES : [today compareWithHQLDateWithOutTime:date] > -1;
+            } else {
+                // 因为每月记录的是当月的月中,所以只要当月的月份跟年份对得上,就没问题
+                date.allowSelectedFutureDate = allowSelectedFutureDate ? YES : (today.month >= date.month && today.year >= date.year);
+            }
         }
     }
 }

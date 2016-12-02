@@ -138,6 +138,8 @@
             shape =drawGeometricShapeLeftHalfCircular; // 周日
         } else if ([dateModel weekdayOfCurrentDate] == 7) {
             shape = drawGeometricShapeRightHalfCircular; // 周六
+        } else if ([dateModel compareWithHQLDateWithOutTime:[HQLDateModel HQLDate]] == 0) {
+            shape = drawGeometricShapeRightHalfCircular;  // 当日
         } else {
             shape = drawGeometricShapeRect; // 周中
         }
