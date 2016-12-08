@@ -31,18 +31,6 @@ typedef enum {
 @property (assign, nonatomic) NSInteger hour;
 @property (assign, nonatomic) NSInteger minute;
 @property (assign, nonatomic) NSInteger second;
-@property (assign, nonatomic, getter=isZero) BOOL zero; // 空model
-
-@property (assign, nonatomic, getter=isSelected) BOOL selected;
-
-@property (assign, nonatomic) HQLCalendarViewSelectionStyleCustom customStyle;
-
-/**
- 是否可以选中未来的日期
- */
-@property (assign, nonatomic, getter=isAllowSelectedFutureDate) BOOL allowSelectedFutureDate;
-
-- (instancetype)initWithZero; // 创建一个空的model
 
 - (instancetype)initWithYear:(NSInteger) year month:(NSInteger)month day:(NSInteger)day hour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second;
 

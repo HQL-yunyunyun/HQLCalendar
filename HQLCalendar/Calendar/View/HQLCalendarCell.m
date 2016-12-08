@@ -22,6 +22,8 @@
 
 @property (strong, nonatomic) HQLDrawGeometricShapeView *selectedView; // 选中View
 
+//@property (assign, nonatomic, getter=isShowDescString) BOOL showDescString;
+
 @end
 
 @implementation HQLCalendarCell
@@ -40,9 +42,9 @@
     [self.dateLabel sizeToFit];
     self.dateLabel.width = self.width;
     self.dateLabel.x = 0;
-    double sign = self.isShowDescString ? 0.6 : 1;
-    self.dateLabel.y = (self.height * sign - self.dateLabel.height) * 0.5 + (self.isShowDescString ? 3 : 0);
-    if (self.isShowDescString) {
+    double sign = self.descLabel.hidden ? 1 : 0.6;
+    self.dateLabel.y = (self.height * sign - self.dateLabel.height) * 0.5 + (self.descLabel.hidden ? 0 : 3);
+    if (!self.descLabel.hidden) {
         [self.descLabel sizeToFit];
         self.descLabel.width = self.width;
         self.descLabel.x = 0;
@@ -55,7 +57,7 @@
 - (NSString *)getCellSting {
     NSString *string = nil;
     if (self.HQL_SelectionStyle == calendarViewSelectionStyleMonth) {
-        switch (self.dateModel.month) {
+        switch (self.model.date.month) {
             case 1: { string = @"一月" ; break; }
             case 2: { string = @"二月" ; break; }
             case 3: { string = @"三月" ; break; }
@@ -70,21 +72,12 @@
             case 12: { string = @"十二月" ; break; }
         }
     } else {
-        string = [NSString stringWithFormat:@"%ld", (long)self.dateModel.day];
+        string = [NSString stringWithFormat:@"%ld", (long)self.model.date.day];
     }
     return string;
 }
 
-#pragma mark - setter 
-
-- (void)setShowDescString:(BOOL)showDescString {
-    _showDescString = showDescString;
-    if (showDescString) {
-        [self addSubview:self.descLabel];
-    } else {
-        [self.descLabel removeFromSuperview];
-    }
-}
+#pragma mark - setter
 
 - (void)setHQL_SelectionStyle:(HQLCalendarViewSelectionStyle)HQL_SelectionStyle {
     _HQL_SelectionStyle = HQL_SelectionStyle;
@@ -96,65 +89,70 @@
         [self.contentView.layer setBorderColor:HQLColor(220, 218, 220).CGColor];
         [self.contentView.layer setBorderWidth:0.5];
     } else {
-        [self.dateLabel setFont:[UIFont systemFontOfSize:15]];
-        [self.descLabel setFont:[UIFont systemFontOfSize:13]];
+        [self.dateLabel setFont:[UIFont systemFontOfSize:14]];
+        [self.descLabel setFont:[UIFont systemFontOfSize:11]];
         
         [self.contentView.layer setBorderWidth:0];
     }
 }
 
-- (void)setDateModel:(HQLDateModel *)dateModel {
-    _dateModel = dateModel;
+- (void)setModel:(HQLCalendarModel *)model {
+    _model = model;
     
     // 重设selectedView的宽高
     [self sendSubviewToBack:self.selectedView];
     self.selectedView.width = self.width;
     self.selectedView.height = self.height;
     
-    if (dateModel.isZero == YES) {
+    if (model.isZero == YES) {
         [self.dateLabel setText:@""];
         self.selectedView.shape = drawGeometricShapeNone;
-        [self setShowDescString:NO];
+        [self.descLabel setHidden:YES];
         [self setNeedsLayout];
         return;
     }
+    
     [self.dateLabel setText:[self getCellSting]];
     
-    if (!dateModel.isAllowSelectedFutureDate) {
+    if (!model.isAllowSelectedFutureDate) {
         // 不能选择未来的日期
         [self.dateLabel setTextColor:HQLColor(170, 170, 170)];
         self.selectedView.shape = drawGeometricShapeNone;
-        [self setShowDescString:NO];
+        [self.descLabel setHidden:YES];
         [self setNeedsLayout];
         return;
     }
     
+    if (model.descString) {
+        [self.descLabel setText:model.descString];
+    }
+    [self.descLabel setHidden:!model.descString];
     // 正常的情况
     HQLDrawGeometricShape shape = drawGeometricShapeNone;
     UIColor *selectedColor = self.backgroundColor;
-    
     if (self.HQL_SelectionStyle == calendarViewSelectionStyleWeek) { // 选择一周的情况
-        if ([dateModel weekdayOfCurrentDate] == 1) {
+        if ([model.date weekdayOfCurrentDate] == 1) {
             shape =drawGeometricShapeLeftHalfCircular; // 周日
-        } else if ([dateModel weekdayOfCurrentDate] == 7) {
+        } else if ([model.date weekdayOfCurrentDate] == 7) {
             shape = drawGeometricShapeRightHalfCircular; // 周六
-        } else if ([dateModel compareWithHQLDateWithOutTime:[HQLDateModel HQLDate]] == 0) {
+        } else if ([model.date compareWithHQLDateWithOutTime:[HQLDateModel HQLDate]] == 0) {
             shape = drawGeometricShapeRightHalfCircular;  // 当日
         } else {
             shape = drawGeometricShapeRect; // 周中
         }
     }
-    if (dateModel.isSelected) {
-        [self.dateLabel setTextColor:[UIColor whiteColor]];
-        [self.descLabel setTextColor:[UIColor whiteColor]];
+    
+    if (model.isSelected) {
+        [self.dateLabel setTextColor:model.dateSelectColor ? model.dateSelectColor : [UIColor whiteColor]];
+        [self.descLabel setTextColor:model.descSelectColor ? model.descSelectColor : [UIColor whiteColor]];
         selectedColor = [UIColor orangeColor];
         
         if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay || self.HQL_SelectionStyle == calendarViewSelectionStyleMonth) { // 选择单日的情况
             shape = drawGeometricShapeCircular;     // 选择日
         } else if (self.HQL_SelectionStyle == calendarViewSelectionStyleCustom) { // 选择自定义区间
-            if (dateModel.customStyle == calendarViewSelectionStyleCustomBeginDate) {
+            if (model.customStyle == calendarViewSelectionStyleCustomBeginDate) {
                 shape = drawGeometricShapeLeftHalfCircular; // 开始
-            } else if (dateModel.customStyle == calendarViewSelectionStyleCustomMiddleDate) {
+            } else if (model.customStyle == calendarViewSelectionStyleCustomMiddleDate) {
                 shape = drawGeometricShapeRect; // 中间
             } else {
                 shape = drawGeometricShapeRightHalfCircular; // 结束
@@ -162,14 +160,14 @@
         }
     } else {
         // 没有选中
-        [self.dateLabel setTextColor:[UIColor blackColor]];
-        [self.descLabel setTextColor:[UIColor redColor]];
+        [self.dateLabel setTextColor:model.dateNormalColor ? model.dateNormalColor : [UIColor blackColor]];
+        [self.descLabel setTextColor:model.descNormalColor ? model.descNormalColor : [UIColor orangeColor]];
         selectedColor = self.backgroundColor;
         
         if (self.HQL_SelectionStyle == calendarViewSelectionStyleWeek) {
             selectedColor = HQLColor(250, 248, 250);
         }
-        if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay && [[HQLDateModel HQLDate] isEqualHQLDateWithOutTime:dateModel]) {
+        if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay && [[HQLDateModel HQLDate] isEqualHQLDateWithOutTime:model.date]) {
             selectedColor = [UIColor orangeColor];
             shape = drawGeometricShapeCircularRing;
             
@@ -187,7 +185,7 @@
 - (UILabel *)dateLabel {
     if (!_dateLabel) {
         _dateLabel = [[UILabel alloc] init];
-        [_dateLabel setFont:[UIFont systemFontOfSize:15]];
+        [_dateLabel setFont:[UIFont systemFontOfSize:14]];
         [_dateLabel setTextColor:[UIColor blackColor]];
         [_dateLabel setTextAlignment:NSTextAlignmentCenter];
     }
@@ -197,9 +195,10 @@
 - (UILabel *)descLabel {
     if (!_descLabel) {
         _descLabel = [[UILabel alloc] init];
-        [_descLabel setFont:[UIFont systemFontOfSize:13]];
+        [_descLabel setFont:[UIFont systemFontOfSize:11]];
         [_descLabel setTextColor:[UIColor blackColor]];
         [_descLabel setTextAlignment:NSTextAlignmentCenter];
+        [self addSubview:_descLabel];
     }
     return _descLabel;
 }
@@ -215,3 +214,15 @@
 }
 
 @end
+
+@implementation HQLCalendarModel
+
+- (instancetype)initWithZero {
+    if (self = [super init]) {
+        self.zero = YES;
+    }
+    return self;
+}
+
+@end
+

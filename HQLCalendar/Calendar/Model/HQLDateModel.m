@@ -10,13 +10,6 @@
 
 @implementation HQLDateModel
 
-- (instancetype)initWithZero {
-    if (self = [super init]) {
-        self.zero = YES;
-    }
-    return self;
-}
-
 - (instancetype)initWithYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day hour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second {
     if (self = [super init]) {
         if (![self checkDataWithYear:year month:month day:day hour:hour minute:minute second:second]) {
@@ -28,7 +21,6 @@
         self.hour = hour;
         self.minute = minute;
         self.second = second;
-        self.zero = NO;
     }
     return self;
 }

@@ -60,12 +60,12 @@
     self.line.width = self.width;
     
     self.lastButton.width = 30;
-    [self.lastButton setBackgroundColor:[UIColor redColor]];
+//    [self.lastButton setBackgroundColor:[UIColor redColor]];
     self.lastButton.y = (self.titleView.height - self.lastButton.height) * 0.5;
     self.lastButton.x = margin;
     
     self.nextButton.width = 30;
-    [self.nextButton setBackgroundColor:[UIColor redColor]];
+//    [self.nextButton setBackgroundColor:[UIColor redColor]];
     self.nextButton.y = (self.titleView.height - self.nextButton.height) * 0.5;
     self.nextButton.x = self.titleView.width - self.nextButton.width - margin;
     
@@ -230,6 +230,20 @@
     
     if ([self.delegate respondsToSelector:@selector(calendar:calendarView:selectionStyle:beginDate:endDate:)]) {
         [self.delegate calendar:self calendarView:caledarView selectionStyle:style beginDate:begin endDate:end];
+    }
+}
+
+- (NSArray<HQLCalendarModel *> *)calendarViewGetDateConfig:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style date:(HQLDateModel *)date {
+    if ([self.delegate respondsToSelector:@selector(calendar:calendarViewGetDateConfig:selectionStyle:date:)]) {
+        return [self.delegate calendar:self calendarViewGetDateConfig:calendarView selectionStyle:style date:date];
+    } else {
+        return nil;
+    }
+}
+
+- (void)calendarViewDidSetDataSource:(HQLCalendarView *)calendar selectionStyle:(HQLCalendarViewSelectionStyle)style date:(HQLDateModel *)date {
+    if ([self.delegate respondsToSelector:@selector(calendar:calendarViewGetDateConfig:selectionStyle:date:)]) {
+        [self.delegate calendar:self calendarViewDidSetDataSource:calendar selectionStyle:style date:date];
     }
 }
 

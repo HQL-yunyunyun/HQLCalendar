@@ -19,7 +19,7 @@
 #define HQLLog(...)
 #endif
 
-@class HQLCalendarView;
+@class HQLCalendarView, HQLCalendarModel;
 
 @protocol HQLCalendarViewDelegate <NSObject>
 
@@ -27,6 +27,19 @@
 - (void)calendarView:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end;
 
 - (void)calendarViewSelectCustom:(HQLCalendarView *)calendarView selectDate:(HQLDateModel *)date;
+
+- (void)calendarViewDidSetDataSource:(HQLCalendarView *)calendar selectionStyle:(HQLCalendarViewSelectionStyle) style date:(HQLDateModel *)date;
+
+/**
+ 获取cell的descString和descColor
+
+ @param calendarView self
+ @param style        当前calendarView的selectionStyle(若style == calendarViewSelectionStyleMonth,返回十二个月的数据;否则返回一个月的数据)
+ @param date         当前日期 (若style == calendarViewSelectionStyleMonth,使用date.year来获取数据;否则使用date.year date.month来获取数据)
+
+ @return calendarModel来装数据
+ */
+- (NSArray <HQLCalendarModel *>*)calendarViewGetDateConfig:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style date:(HQLDateModel *)date;
 
 @end
 
@@ -95,5 +108,14 @@
 - (void)deselectDate:(HQLDateModel *)date;
 
 - (void)reloadData;
+
+/**
+ 给当前calendarView的dataSource赋值(desc等配置)
+
+ @param configArray 主要赋值
+ @param style       style,如果style与当前style不相等,则不会赋值(主要分辨选择月和其他情况)
+ @param date        configArray的日期(月跟年)
+ */
+- (void)reloadDataWithCellConfig:(NSArray <HQLCalendarModel *>*)configArray stytle:(HQLCalendarViewSelectionStyle)style date:(HQLDateModel *)date;
 
 @end
