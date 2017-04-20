@@ -302,7 +302,8 @@
     if (!_calendar) {
         _calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 0, ZXScreenW, ZXScreenH) dateModel:self.dateModel];
         _calendar.selectionStyle = calendarViewSelectionStyleDay;
-        _calendar.allowSelectedFutureDate = NO;
+//        _calendar.allowSelectedFutureDate = YES;
+//        _calendar.allowSelectedPassedDate = NO;
         _calendar.delegate = self;
     }
     return _calendar;

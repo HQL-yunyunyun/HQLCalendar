@@ -82,6 +82,8 @@
 - (void)prepareUI {
     [self addSubview:self.titleView];
 //    [self setBackgroundColor:[UIColor redColor]];
+    self.allowSelectedPassedDate = YES;
+    self.allowSelectedFutureDate = NO;
 }
 
 #pragma mark - event 
@@ -320,6 +322,7 @@
             view.delegate = self;
             view.selectionStyle = self.selectionStyle;
             view.allowSelectedFutureDate = self.allowSelectedFutureDate;
+            view.allowSelectedPassedDate = self.allowSelectedPassedDate;
             view.hidden = (i != 1);
             [view reloadData];
             [self addSubview:view];
@@ -377,6 +380,14 @@
     if (self.viewArray.count == 0 || !self.viewArray) return;
     for (HQLCalendarView *view in self.viewArray) {
         [view setAllowSelectedFutureDate:allowSelectedFutureDate];
+    }
+}
+
+- (void)setAllowSelectedPassedDate:(BOOL)allowSelectedPassedDate {
+    _allowSelectedPassedDate = allowSelectedPassedDate;
+    if (self.viewArray.count == 0 || !self.viewArray) return;
+    for (HQLCalendarView *view in self.viewArray) {
+        [view setAllowSelectedPassedDate:allowSelectedPassedDate];
     }
 }
 

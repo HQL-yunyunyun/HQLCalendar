@@ -43,6 +43,11 @@
  */
 @property (assign, nonatomic, getter=isAllowSelectedFutureDate) BOOL allowSelectedFutureDate;
 
+/**
+ 是否可以选中过去的日期, 默认为YES
+ */
+@property (assign, nonatomic, getter=isAllowSelectedPassedDate) BOOL allowSelectedPassedDate;
+
 @property (assign, nonatomic) id <HQLCalendarDelegate>delegate;
 
 // 原始dateModel 高度不可控制

@@ -71,11 +71,17 @@ typedef enum {
 // 单纯比较日期， 不比较时间， 若self大于date 则为1 ，相等为0 ，小于为-1
 - (int)compareWithHQLDateWithOutTime:(HQLDateModel *)date;
 
+// 单纯比较月份，不比较时间，若self大于date 则为1 ，相等为0 ，小于为-1
+- (int)compareMonthWithHQLDateWithOutTime:(HQLDateModel *)date;
+
 // 比较日期大小， 若self大于date 则为1 ，相等为0 ，小于为-1
 - (int)compareWithHQLDate:(HQLDateModel *)date;
 
 // 返回当前日期在该月中是第几周
 - (NSInteger)weekOfMonth;
+
+// 获取格式化日期字符串
+- (NSString *)getFormatStringWithDateFormat:(NSString *)format;
 
 + (NSInteger)rowOfCalenderInMonth:(NSInteger)month year:(NSInteger)year;
 

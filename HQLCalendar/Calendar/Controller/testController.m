@@ -41,7 +41,7 @@
     } else if (self.mode == 2) {
         view.selectionStyle = calendarViewSelectionStyleWeek;
         view.allowSelectedFutureDate = YES;
-        view.selectedLastWeek = YES;
+//        view.selectedLastWeek = YES;
     } else if (self.mode == 3) {
         view.selectionStyle = calendarViewSelectionStyleDay;
         view.allowSelectedFutureDate = NO;
@@ -51,7 +51,7 @@
     } else if (self.mode == 5) {
         [view setHidden:YES];
         
-        HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2016 month:11 day:1]];
+        HQLCalendar *calendar = [[HQLCalendar alloc] initWithFrame:CGRectMake(0, 100, self.view.frame.size.width, 200) dateModel:[[HQLDateModel alloc] initWithYear:2017 month:11 day:1]];
         calendar.selectionStyle = calendarViewSelectionStyleMonth;
         calendar.delegate = self;
         //        calendar.allowSelectedFutureDate = YES;

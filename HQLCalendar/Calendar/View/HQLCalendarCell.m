@@ -114,7 +114,7 @@
     
     [self.dateLabel setText:[self getCellSting]];
     
-    if (!model.isAllowSelectedFutureDate) {
+    if (![self isAllowSelectedCell]) {
         // 不能选择未来的日期
         [self.dateLabel setTextColor:HQLColor(170, 170, 170)];
         self.selectedView.shape = drawGeometricShapeNone;
@@ -136,7 +136,23 @@
         } else if ([model.date weekdayOfCurrentDate] == 7) {
             shape = drawGeometricShapeRightHalfCircular; // 周六
         } else if ([model.date compareWithHQLDateWithOutTime:[HQLDateModel HQLDate]] == 0) {
-            shape = drawGeometricShapeRightHalfCircular;  // 当日
+            if (model.isAllowSelectedFutureDate) {
+                if (model.isAllowSelectedPassedDate) {
+                    // 允许选择未来和过去
+                    shape = drawGeometricShapeRect;
+                } else {
+                    // 允许选择未来 不允许选择过去
+                    shape = drawGeometricShapeLeftHalfCircular;
+                }
+            } else {
+                if (model.isAllowSelectedPassedDate) {
+                    // 不允许选择未来，但允许选择过去
+                    shape = drawGeometricShapeRightHalfCircular;
+                } else {
+                    // 两个都不允许
+                    shape = drawGeometricShapeCircular;
+                }
+            }
         } else {
             shape = drawGeometricShapeRect; // 周中
         }
@@ -178,6 +194,43 @@
     [self.selectedView setColor:selectedColor];
     [self.selectedView setShape:shape];
     [self setNeedsLayout];
+}
+
+// 根据model 自行判断cell是否可以被选中
+- (BOOL)isAllowSelectedCell {
+    HQLDateModel *today = [[HQLDateModel alloc] initCurrentDate];
+    NSInteger dayCompareResult = [self.model.date compareWithHQLDateWithOutTime:today];
+    NSInteger monthCompareResult = [self.model.date compareMonthWithHQLDateWithOutTime:today];
+    
+    if (self.model.allowSelectedFutureDate) {
+        if (self.model.allowSelectedPassedDate) {
+            // 都为yes
+            return YES;
+        } else {
+            // 允许选择未来 但不允许选择过去 ---> model.date 要大于 today
+            if (self.HQL_SelectionStyle != calendarViewSelectionStyleMonth) {
+                return dayCompareResult > -1;
+            } else { // 月的比较
+                return monthCompareResult > -1;
+            }
+        }
+    } else {
+        // 允许选择过去 不允许选择未来 ---> model.date 要小于 today
+        if (self.model.allowSelectedPassedDate) {
+            if (self.HQL_SelectionStyle != calendarViewSelectionStyleMonth) {
+                return dayCompareResult < 1;
+            } else { // 月的比较
+                return monthCompareResult < 1;
+            }
+        } else {
+            // 都不允许的情况下 ---> 只有当天能选择
+            if (self.HQL_SelectionStyle != calendarViewSelectionStyleMonth) {
+                return dayCompareResult == 0;
+            } else {
+                return monthCompareResult == 0;
+            }
+        }
+    }
 }
 
 #pragma mark - getter

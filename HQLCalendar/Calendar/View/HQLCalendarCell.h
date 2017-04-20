@@ -21,6 +21,13 @@
 @property (assign, nonatomic) HQLCalendarViewSelectionStyle HQL_SelectionStyle;
 
 /**
+ 根据model的 isAllowSelectedFutureDate 和 isAllowSelectedPassedDate 来比较当前日期，返回是否可以选择
+
+ @return 结果
+ */
+- (BOOL)isAllowSelectedCell;
+
+/**
  是否选中当前日期
  */
 //@property (assign, nonatomic, getter=isSelectedCurrentDate) BOOL selectedCurrentDate;
@@ -51,6 +58,11 @@
  是否可以选中未来的日期
  */
 @property (assign, nonatomic, getter=isAllowSelectedFutureDate) BOOL allowSelectedFutureDate;
+
+/**
+ 是否可以选中过去日期
+ */
+@property (assign, nonatomic, getter=isAllowSelectedPassedDate) BOOL allowSelectedPassedDate;
 
 @property (copy, nonatomic) NSString *descString;
 @property (strong, nonatomic) UIColor *descNormalColor;

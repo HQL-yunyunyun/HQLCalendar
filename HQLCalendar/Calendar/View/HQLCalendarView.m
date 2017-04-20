@@ -81,6 +81,8 @@
 
 - (void)prepareUI {
     [self setBackgroundColor:[UIColor whiteColor]];
+    [self setAllowSelectedPassedDate:YES];
+    [self setAllowSelectedFutureDate:NO];
 }
 
 #pragma mark - event
@@ -102,12 +104,12 @@
 }
 
 // 设置week的in的Path
-- (void)setupWeekIndexPath:(NSMutableArray *)indexPath recordArray:(NSMutableArray <HQLDateModel *>*)recordArray region:(NSInteger)region isFront:(BOOL)yesOrNo currentIndexPath:(NSIndexPath *)currentIndexPath isSelected:(BOOL)selected{
+- (void)setupWeekIndexPath:(NSMutableArray *)indexPath recordArray:(NSMutableArray <HQLDateModel *>*)recordArray region:(NSInteger)region isFront:(BOOL)yesOrNo currentIndexPath:(NSIndexPath *)currentIndexPath isSelected:(BOOL)selected {
     HQLDateModel *lastDate = nil;
     for (int i = (yesOrNo ? 0 : 1) ; i <= region; i++) {
         NSInteger sign = yesOrNo ? -1 : 1;
         HQLCalendarModel *model = self.dataSource[currentIndexPath.item + (i * sign)];
-        if (model.isZero == YES || ([model.date compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1 && !self.isAllowSelectedFutureDate)) break;
+        if (model.isZero == YES || ([model.date compareWithHQLDateWithOutTime:[[HQLDateModel alloc] initCurrentDate]] == 1 && !self.isAllowSelectedFutureDate && !self.isAllowSelectedPassedDate)) break;
         model.selected = selected;
         // 要保持顺序
         if (yesOrNo) {
@@ -181,13 +183,16 @@
     }
     // 计算collectionView的frame
     self.collectionViewFlowLayout.itemSize = CGSizeMake(kItemWidth, kItemHeight);
-    [self.collectionView reloadData];
     // 计算collectionView的高度
     NSInteger row = self.selectionStyle == calendarViewSelectionStyleMonth ? self.dataSource.count / kMonthStyleRowCount : self.dataSource.count / kWeekdayNum;
     self.collectionView.y = CGRectGetMaxY(self.headerView.frame);
     self.collectionView.height = row * kItemHeight;
     self.collectionView.width = self.collectionViewWidth;
     self.collectionView.x = (self.width - self.collectionViewWidth) * 0.5;
+    
+//    [self.collectionView reloadData];
+    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+    
     // 整个View的height
     self.viewHeight = CGRectGetMaxY(self.collectionView.frame);
     self.height = self.viewHeight;
@@ -244,6 +249,7 @@
         if (self.selectionStyle == calendarViewSelectionStyleMonth) {
             indexPath = [NSIndexPath indexPathForItem:date.month - 1 inSection:0];
         }
+//        self collectionView reloadData
         [self collectionView:self.collectionView didSelectItemAtIndexPath:indexPath];
     } else {
         [self selectOrDeselectDate:date isSelect:YES];
@@ -288,7 +294,10 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     HQLCalendarModel *model = self.dataSource[indexPath.item];
-    if (model.isZero == YES || model.isAllowSelectedFutureDate == NO) return;
+    HQLCalendarCell *cell = (HQLCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath];
+//    if (model.isZero == YES || model.isAllowSelectedFutureDate == NO || model.isAllowSelectedPassedDate == NO) return;
+
+    if (model.isZero || ![cell isAllowSelectedCell]) return;
     
     if (self.selectionStyle != calendarViewSelectionStyleCustom) {
         // 不是自定义区间
@@ -436,6 +445,7 @@
         }
     }
     [self setAllowSelectedFutureDate:self.isAllowSelectedFutureDate]; // 是否允许选择未来日期
+    [self setAllowSelectedPassedDate:self.isAllowSelectedPassedDate]; // 是否允许选择过去的日期
     [self setSelectedLastWeek:self.selectedLastWeek]; // 选择最后一个星期
     [self setSelectedFirstWeek:self.selectedFirstWeek]; // 选择第一个星期
     
@@ -456,14 +466,34 @@
     _allowSelectedFutureDate = allowSelectedFutureDate;
     
     if (self.dataSource.count != 0) {
-        HQLDateModel *today = [[HQLDateModel alloc] initCurrentDate];
+//        HQLDateModel *today = [[HQLDateModel alloc] initCurrentDate];
         for (HQLCalendarModel *model in self.dataSource) {
-            if (self.selectionStyle != calendarViewSelectionStyleMonth) {
-                model.allowSelectedFutureDate = allowSelectedFutureDate ? YES : [today compareWithHQLDateWithOutTime:model.date] > -1;
-            } else {
-                // 因为每月记录的是当月的月中,所以只要当月的月份跟年份对得上,就没问题
-                model.allowSelectedFutureDate = allowSelectedFutureDate ? YES : (today.month >= model.date.month && today.year >= model.date.year);
-            }
+            model.allowSelectedFutureDate = allowSelectedFutureDate;
+//            if (self.selectionStyle != calendarViewSelectionStyleMonth) {
+//                model.allowSelectedFutureDate = allowSelectedFutureDate ? YES : [today compareWithHQLDateWithOutTime:model.date] > -1;
+//            } else {
+//                // 因为每月记录的是当月的月中,所以只要当月的月份跟年份对得上,就没问题
+//                model.allowSelectedFutureDate = allowSelectedFutureDate ? YES : (today.month >= model.date.month && today.year >= model.date.year);
+//            }
+        }
+    }
+}
+
+- (void)setAllowSelectedPassedDate:(BOOL)allowSelectedPassedDate {
+    _allowSelectedPassedDate = allowSelectedPassedDate;
+    
+    if (self.dataSource.count != 0) {
+//        HQLDateModel *today = [[HQLDateModel alloc] initCurrentDate];
+        for (HQLCalendarModel *model in self.dataSource) {
+            
+            model.allowSelectedPassedDate = allowSelectedPassedDate;
+            
+//            if (self.selectionStyle != calendarViewSelectionStyleMonth) {
+//                model.allowSelectedPassedDate = allowSelectedPassedDate ? YES : [today compareWithHQLDateWithOutTime:model.date] < 1;
+//            } else {
+//                // 因为每月记录的是当月的月中,所以只要当月的月份跟年份对得上,就没问题
+//                model.allowSelectedPassedDate = allowSelectedPassedDate ? YES : (today.month <= model.date.month && today.year <= model.date.year);
+//            }
         }
     }
 }

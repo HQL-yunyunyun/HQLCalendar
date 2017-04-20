@@ -141,10 +141,24 @@
     return result;
 }
 
+- (NSString *)getFormatStringWithDateFormat:(NSString *)format {
+    NSDateFormatter *formatter = [NSDateFormatter new];
+    [formatter setDateFormat:format];
+    return [formatter stringFromDate:[self changeToNSDate]];
+}
+
 - (int)compareWithHQLDateWithOutTime:(HQLDateModel *)date {
     HQLDateModel *first = [[HQLDateModel alloc] initWithHQLDate:self];
     HQLDateModel *second = [[HQLDateModel alloc] initWithHQLDate:date];
     first.hour = second.hour = first.minute = second.minute = first.second = second.second = 0;
+    return [first compareWithHQLDate:second];
+}
+
+- (int)compareMonthWithHQLDateWithOutTime:(HQLDateModel *)date {
+    HQLDateModel *first = [[HQLDateModel alloc] initWithHQLDate:self];
+    HQLDateModel *second = [[HQLDateModel alloc] initWithHQLDate:date];
+    first.hour = second.hour = first.minute = second.minute = first.second = second.second = 0;
+    first.day = second.day = 1; // 都为1号
     return [first compareWithHQLDate:second];
 }
 
