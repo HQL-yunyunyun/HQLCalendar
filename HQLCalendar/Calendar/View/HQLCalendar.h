@@ -48,6 +48,11 @@
  */
 @property (assign, nonatomic, getter=isAllowSelectedPassedDate) BOOL allowSelectedPassedDate;
 
+/**
+ 是否允许选择多个日期, 默认为NO
+ */
+@property (assign, nonatomic, getter=isAllowSelectedMultiDate) BOOL allowSelectedMultiDate;
+
 @property (assign, nonatomic) id <HQLCalendarDelegate>delegate;
 
 // 原始dateModel 高度不可控制

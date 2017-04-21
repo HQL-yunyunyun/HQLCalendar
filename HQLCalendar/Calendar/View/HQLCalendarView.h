@@ -73,6 +73,11 @@
 @property (assign, nonatomic, getter=isAllowSelectedPassedDate) BOOL allowSelectedPassedDate;
 
 /**
+ 是否允许选择多个日期, 默认为NO
+ */
+@property (assign, nonatomic, getter=isAllowSelectedMultiDate) BOOL allowSelectedMultiDate;
+
+/**
  是否选中最后一个星期(只有在最后一个星期是不完整的情况下才有效)
  */
 @property (assign, nonatomic, getter=isSelectedLastWeek) BOOL selectedLastWeek;
