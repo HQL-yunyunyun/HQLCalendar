@@ -98,6 +98,7 @@
     [self setAllowSelectedFutureDate:NO];
     [self setAllowSelectedMultiDate:NO];
     [self setHideHeaderView:NO];
+//    [self setCellTintColor:[UIColor redColor]];
 }
 
 #pragma mark - event
@@ -224,6 +225,16 @@
         
         [self reloadData];
     }
+}
+
+- (NSMutableArray<HQLDateModel *> *)currentSelectDateArray {
+    NSMutableArray *array = [NSMutableArray array];
+    for (HQLCalendarModel *model in self.dataSource) {
+        if (model.isSelected) {
+            [array addObject:model.date];
+        }
+    }
+    return array;
 }
 
 #pragma mark - record tool method
@@ -609,6 +620,7 @@
     [self setSelectedLastWeek:self.selectedLastWeek]; // 选择最后一个星期
     [self setSelectedFirstWeek:self.selectedFirstWeek]; // 选择第一个星期
     [self setHideHeaderView:self.isHideHeaderView]; // 是否隐藏hideView
+    [self setCellTintColor:self.cellTintColor]; // 设置颜色
     
     if ([self.delegate respondsToSelector:@selector(calendarViewDidSetDataSource:selectionStyle:date:)]) {
         [self.delegate calendarViewDidSetDataSource:self selectionStyle:self.selectionStyle date:dateModel];
@@ -675,6 +687,15 @@
 - (void)setHideHeaderView:(BOOL)hideHeaderView {
     _hideHeaderView = hideHeaderView;
     self.headerView.hidden = hideHeaderView;
+}
+
+- (void)setCellTintColor:(UIColor *)cellTintColor {
+    _cellTintColor = cellTintColor;
+    if (self.dataSource.count == 0) return;
+    for (HQLCalendarModel *model in self.dataSource) {
+        model.tintColor = cellTintColor;
+    }
+    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
 }
 
 #pragma mark - getter

@@ -71,6 +71,11 @@
 @property (strong, nonatomic) UIColor *dateNormalColor;
 @property (strong, nonatomic) UIColor *dateSelectColor;
 
+/**
+ shapeColor
+ */
+@property (strong, nonatomic) UIColor *tintColor;
+
 - (instancetype)initWithZero; // 创建一个空的model
 
 @end

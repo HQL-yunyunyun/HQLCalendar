@@ -78,6 +78,11 @@
 @property (assign, nonatomic, getter=isAllowSelectedMultiDate) BOOL allowSelectedMultiDate;
 
 /**
+ 日历选中时的color
+ */
+@property (strong, nonatomic) UIColor *cellTintColor;
+
+/**
  是否隐藏headerView(显示 日 一 二 三 的View) 默认为NO
  */
 @property (assign, nonatomic, getter=isHideHeaderView) BOOL hideHeaderView;
@@ -132,5 +137,12 @@
  @param date        configArray的日期(月跟年)
  */
 - (void)reloadDataWithCellConfig:(NSArray <HQLCalendarModel *>*)configArray stytle:(HQLCalendarViewSelectionStyle)style date:(HQLDateModel *)date;
+
+/**
+ 获取当前已选择日期
+
+ @return result
+ */
+- (NSMutableArray <HQLDateModel *>*)currentSelectDateArray;
 
 @end

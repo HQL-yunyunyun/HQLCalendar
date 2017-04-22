@@ -161,7 +161,8 @@
     if (model.isSelected) {
         [self.dateLabel setTextColor:model.dateSelectColor ? model.dateSelectColor : [UIColor whiteColor]];
         [self.descLabel setTextColor:model.descSelectColor ? model.descSelectColor : [UIColor whiteColor]];
-        selectedColor = [UIColor orangeColor];
+//        selectedColor = [UIColor orangeColor];
+        selectedColor = model.tintColor ? model.tintColor : [UIColor orangeColor];
         
         if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay || self.HQL_SelectionStyle == calendarViewSelectionStyleMonth) { // 选择单日的情况
             shape = drawGeometricShapeCircular;     // 选择日
@@ -184,11 +185,14 @@
             selectedColor = HQLColor(250, 248, 250);
         }
         if (self.HQL_SelectionStyle == calendarViewSelectionStyleDay && [[HQLDateModel HQLDate] isEqualHQLDateWithOutTime:model.date]) {
-            selectedColor = [UIColor orangeColor];
+//            selectedColor = [UIColor orangeColor];
+            selectedColor = model.tintColor ? model.tintColor : [UIColor orangeColor];
             shape = drawGeometricShapeCircularRing;
             
-            [self.dateLabel setTextColor:[UIColor orangeColor]];
-            [self.descLabel setTextColor:[UIColor orangeColor]];
+            [self.dateLabel setTextColor:selectedColor];
+            [self.descLabel setTextColor:selectedColor];
+//            [self.dateLabel setTextColor:[UIColor orangeColor]];
+//            [self.descLabel setTextColor:[UIColor orangeColor]];
         }
     }
     [self.selectedView setColor:selectedColor];
