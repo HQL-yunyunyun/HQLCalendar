@@ -49,6 +49,11 @@
 @property (assign, nonatomic, getter=isAllowSelectedPassedDate) BOOL allowSelectedPassedDate;
 
 /**
+ 是否隐藏headerView(显示 日 一 二 三 的View) 默认为NO
+ */
+@property (assign, nonatomic, getter=isHideHeaderView) BOOL hideHeaderView;
+
+/**
  是否允许选择多个日期, 默认为NO
  */
 @property (assign, nonatomic, getter=isAllowSelectedMultiDate) BOOL allowSelectedMultiDate;

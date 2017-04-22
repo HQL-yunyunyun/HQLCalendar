@@ -84,6 +84,7 @@
     self.allowSelectedPassedDate = YES;
     self.allowSelectedFutureDate = NO;
     self.allowSelectedMultiDate = NO;
+    self.hideHeaderView = NO;
 }
 
 #pragma mark - event 
@@ -324,6 +325,7 @@
             view.allowSelectedFutureDate = self.allowSelectedFutureDate;
             view.allowSelectedPassedDate = self.allowSelectedPassedDate;
             view.allowSelectedMultiDate = self.allowSelectedMultiDate;
+            view.hideHeaderView = self.hideHeaderView;
             view.hidden = (i != 1);
             [view reloadData];
             [self addSubview:view];
@@ -397,6 +399,14 @@
     if (self.viewArray.count == 0 || !self.viewArray) return;
     for (HQLCalendarView *view in self.viewArray) {
         [view setAllowSelectedMultiDate:allowSelectedMultiDate];
+    }
+}
+
+- (void)setHideHeaderView:(BOOL)hideHeaderView {
+    _hideHeaderView = hideHeaderView;
+    if (self.viewArray.count == 0 || !self.viewArray) return;
+    for (HQLCalendarView *view in self.viewArray) {
+        [view setHideHeaderView:hideHeaderView];
     }
 }
 

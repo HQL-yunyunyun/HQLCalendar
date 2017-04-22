@@ -97,6 +97,7 @@
     [self setAllowSelectedPassedDate:YES];
     [self setAllowSelectedFutureDate:NO];
     [self setAllowSelectedMultiDate:NO];
+    [self setHideHeaderView:NO];
 }
 
 #pragma mark - event
@@ -108,7 +109,8 @@
 
 - (void)calcuateViewFrame {
     // 计算headerView的frame
-    self.headerView.height = self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : (kItemWidth * 0.8);
+    self.headerView.height = self.isHideHeaderView ? 0 : (self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : (kItemWidth * 0.8));
+//    self.headerView.height = self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : (kItemWidth * 0.8);
     self.headerView.width = self.width;
     self.headerViewBottomLine.y = (kItemWidth * 0.8);
     self.headerViewBottomLine.width = self.width;
@@ -606,6 +608,7 @@
     [self setAllowSelectedMultiDate:self.isAllowSelectedMultiDate]; // 是否允许选择多个日期
     [self setSelectedLastWeek:self.selectedLastWeek]; // 选择最后一个星期
     [self setSelectedFirstWeek:self.selectedFirstWeek]; // 选择第一个星期
+    [self setHideHeaderView:self.isHideHeaderView]; // 是否隐藏hideView
     
     if ([self.delegate respondsToSelector:@selector(calendarViewDidSetDataSource:selectionStyle:date:)]) {
         [self.delegate calendarViewDidSetDataSource:self selectionStyle:self.selectionStyle date:dateModel];
@@ -661,13 +664,17 @@
 - (void)setSelectionStyle:(HQLCalendarViewSelectionStyle)selectionStyle {
     _selectionStyle = selectionStyle;
     
-    if (selectionStyle == calendarViewSelectionStyleMonth) {
-        // 重新设置当前dataSource
-        [self.headerView setHidden:YES];
+    [self setHideHeaderView:(selectionStyle == calendarViewSelectionStyleMonth)];
+    if (self.dateModel) {
+        [self setDateModel:self.dateModel];
     } else {
-        [self.headerView setHidden:NO];
+        [self setDateModel:[HQLDateModel HQLDate]];
     }
-    [self setDateModel:[HQLDateModel HQLDate]];
+}
+
+- (void)setHideHeaderView:(BOOL)hideHeaderView {
+    _hideHeaderView = hideHeaderView;
+    self.headerView.hidden = hideHeaderView;
 }
 
 #pragma mark - getter

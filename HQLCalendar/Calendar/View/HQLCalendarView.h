@@ -78,6 +78,11 @@
 @property (assign, nonatomic, getter=isAllowSelectedMultiDate) BOOL allowSelectedMultiDate;
 
 /**
+ 是否隐藏headerView(显示 日 一 二 三 的View) 默认为NO
+ */
+@property (assign, nonatomic, getter=isHideHeaderView) BOOL hideHeaderView;
+
+/**
  是否选中最后一个星期(只有在最后一个星期是不完整的情况下才有效)
  */
 @property (assign, nonatomic, getter=isSelectedLastWeek) BOOL selectedLastWeek;
