@@ -46,7 +46,7 @@
 // 记录选中的月
 @property (strong, nonatomic) NSMutableArray <HQLDateModel *>*monthRecordArray;
 
-@property (assign, nonatomic) BOOL isFirstSetFrame;
+//@property (assign, nonatomic) BOOL isFirstSetFrame;
 
 @end
 
@@ -80,19 +80,19 @@
 }
 
 - (void)setFrame:(CGRect)frame {
-    CGFloat originWidth = self.width;
+//    CGFloat originWidth = self.width;
     [super setFrame:frame];
-    if (originWidth != self.width || self.isFirstSetFrame) {
-        self.isFirstSetFrame = NO;
+//    if (originWidth != self.width || self.isFirstSetFrame) {
+//        self.isFirstSetFrame = NO;
         NSInteger itemWidth = self.width / kWeekdayNum;
         self.collectionViewWidth = itemWidth * kWeekdayNum;
-    }
+//    }
 }
 
 #pragma mark - prepare UI
 
 - (void)prepareUI {
-    self.isFirstSetFrame = YES;
+//    self.isFirstSetFrame = YES;
     [self setBackgroundColor:[UIColor whiteColor]];
     [self setAllowSelectedPassedDate:YES];
     [self setAllowSelectedFutureDate:NO];
